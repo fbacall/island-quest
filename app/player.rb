@@ -4,7 +4,7 @@ class Player
   attr_accessor :x_pos, :y_pos, # World position
                 :x_vel, :y_vel,
                 :x_accel, :y_accel,
-                :max_speed, :max_accel, :friction, :dir, :skipped_frames, :frame
+                :max_speed, :max_accel, :friction, :dir, :skipped_frames, :frame, :z_index
 
   def initialize(x, y)
     super
@@ -30,13 +30,14 @@ class Player
     @skipped_frames = 0
     @frame = 0
     @dir = 'down'
+    @z_index = 5
   end
 
   def x
     if x_pos < camera_center_x
       x_pos
-    elsif x_pos > ($gtk.args.state.world.w - camera_center_x)
-      camera_center_x + (x_pos - ($gtk.args.state.world.w - camera_center_x))
+    elsif x_pos > ($gtk.args.state.map.w - camera_center_x)
+      camera_center_x + (x_pos - ($gtk.args.state.map.w - camera_center_x))
     else
       camera_center_x
     end * $gtk.args.state.game_scale
@@ -45,8 +46,8 @@ class Player
   def y
     if y_pos < camera_center_y
       y_pos
-    elsif y_pos > ($gtk.args.state.world.w - camera_center_y)
-      camera_center_y + (y_pos - ($gtk.args.state.world.w - camera_center_y))
+    elsif y_pos > ($gtk.args.state.map.h - camera_center_y)
+      camera_center_y + (y_pos - ($gtk.args.state.map.h - camera_center_y))
     else
       camera_center_y
     end * $gtk.args.state.game_scale
@@ -116,6 +117,8 @@ class Player
       self.frame = (frame + 1) % 4
       self.skipped_frames = 0
     end
+
+    move
   end
 
   def accelerate
@@ -139,6 +142,31 @@ class Player
     else
       self.y_vel = 0
     end
+  end
+
+  def move
+    next_x = (x_pos + x_vel).clamp(w.half, $gtk.args.state.map.w - w.half)
+    next_y = (y_pos + y_vel).clamp(h.half, $gtk.args.state.map.h - h.half)
+
+    if collision?(next_x, y_pos)
+      self.x_vel = 0
+      self.x_accel = 0
+    else
+      self.x_pos = next_x
+    end
+
+    if collision?(x_pos, next_y)
+      self.y_vel = 0
+      self.y_accel = 0
+    else
+      self.y_pos = next_y
+    end
+  end
+
+  def collision?(next_x, next_y)
+    next_tile1, next_tile2 = $gtk.args.state.map.tiles_at(next_x, next_y)
+
+    !(next_tile1.attributes.id < 3 && next_tile2.nil?)
   end
 
   def serialize
