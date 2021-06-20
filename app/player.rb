@@ -16,7 +16,7 @@ class Player
     @y_vel = 0
     @x_accel = 0
     @y_accel = 0
-    @path = 'maps/man.png'
+    @path = 'gfx/man.png'
     @a = 255
     @r = 255
     @g = 255
@@ -147,10 +147,12 @@ class Player
   def move
     next_x = (x_pos + x_vel).clamp(w.half, $gtk.args.state.map.w - w.half)
     next_y = (y_pos + y_vel).clamp(h.half, $gtk.args.state.map.h - h.half)
+    col = false
 
     if collision?(next_x, y_pos)
       self.x_vel = 0
       self.x_accel = 0
+      col = true
     else
       self.x_pos = next_x
     end
@@ -158,9 +160,16 @@ class Player
     if collision?(x_pos, next_y)
       self.y_vel = 0
       self.y_accel = 0
+      col = true
     else
       self.y_pos = next_y
     end
+
+    if speed > 0.1 && (self.frame == 1 || self.frame == 3)
+      $gtk.args.outputs.sounds << 'sounds/sand.wav'
+    end
+
+    $gtk.args.outputs.sounds << 'sounds/thud.wav' if col
   end
 
   def collision?(next_x, next_y)
@@ -187,7 +196,7 @@ class Player
   end
 
   def debug_info
-    "Player: #{x_pos}, #{y_pos} [A: #{x_accel}, #{y_accel}] [V: #{x_vel}, #{y_vel}] (Draw: #{x}, #{y}) (Dir: #{dir} #{source_x} #{source_y} #{frame})"
+    "Player: #{x_pos}, #{y_pos} [A: #{x_accel}, #{y_accel}] [V: #{x_vel}, #{y_vel}] (Draw: #{x}, #{y}) (Dir: #{dir} #{source_x} #{source_y} #{frame}) "
   end
 
   private

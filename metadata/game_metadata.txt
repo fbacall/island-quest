@@ -1,0 +1,7 @@
+devid=fbacall
+devtitle=Fonzo
+gameid=island-quest
+gametitle=Island Quest
+version=0.1
+icon=metadata/icon.png
+#compile_ruby=false
