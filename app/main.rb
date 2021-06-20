@@ -74,10 +74,14 @@ def tick(args)
   next_tile2 = args.state.map.layers.at(1).tile_at((next_x / 16).round, (args.state.map.attributes.height.to_i - 1) - (next_y / 16).round)
   if tile_x == next_x || (next_tile1.attributes.id < 3 && next_tile2.nil?)
     args.state.player.x = next_x
+  else
+    args.state.player.x_vel = args.state.player.x_vel * -2
   end
 
   if tile_y == next_y || (next_tile1.attributes.id < 3 && next_tile2.nil?)
     args.state.player.y = next_y
+  else
+    args.state.player.y_vel = args.state.player.y_vel * -2
   end
 
   unless args.state.map.nil?
@@ -138,8 +142,47 @@ def tick(args)
     "Map: #{map_x} #{map_y}"
   ]
 
+  dir = 'default'
+  args.state.player.frame_y ||= 0
+  unless args.state.player.x_accel == 0 && args.state.player.y_accel == 0
+    if args.state.player.x_accel.abs > args.state.player.y_accel.abs
+      if args.state.player.x_accel > 0
+        dir = 'right'
+        frame_y = 0
+      else
+        dir = 'left'
+        frame_y = 16
+      end
+    else
+      if args.state.player.y_accel > 0
+        dir = 'up'
+        frame_y = 48
+      else
+        dir = 'down'
+        frame_y = 32
+      end
+    end
+    args.state.player.frame_y = frame_y
+  end
+  speed = mag(args.state.player.x_vel, args.state.player.y_vel)
+  frameskip = (5 - speed) * 3
+  if speed > 0.2
+    if (args.state.player.skipped_frames += 1) >= frameskip
+      args.state.player.walk_frame = (args.state.player.walk_frame + 1) % 4
+      args.state.player.skipped_frames = 0
+    end
+    frame_x = args.state.player.walk_frame * 16
+  else
+    frame_x = 16
+  end
+  args.outputs.labels << [
+    20,
+    410,
+    "Dir: #{dir} #{frame_x} #{frame_y} (#{args.state.player.frame_y})"
+  ]
+
   args.outputs.sprites << [map_x * game_scale, map_y * game_scale, args.state.world.w * game_scale, args.state.world.h * game_scale, :layer1]
-  args.outputs.sprites << [player_draw_x * game_scale, player_draw_y * game_scale, args.state.player.w * game_scale, args.state.player.h * game_scale, 'man.png']
+  args.outputs.sprites << [player_draw_x * game_scale, player_draw_y * game_scale, args.state.player.w * game_scale, args.state.player.h * game_scale, 'maps/man.png', 0,255,255,255,255,frame_x,args.state.player.frame_y,16,16]
   args.outputs.sprites << [map_x * game_scale, map_y * game_scale, args.state.world.w * game_scale, args.state.world.h * game_scale, :layer2]
 end
 
