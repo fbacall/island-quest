@@ -31,6 +31,15 @@ class Player
     @frame = 0
     @dir = 'down'
     @z_index = 5
+    $gtk.args.audio[:footstep] ||= {
+      input: 'sounds/sand.wav',  # Filename
+      x: 0.0, y: 0.0, z: 0.0,   # Relative position to the listener, x, y, z from -1.0 to 1.0
+      gain: 0.2,                # Volume (0.0 to 1.0)
+      pitch: 1.0,               # Pitch of the sound (1.0 = original pitch)
+      paused: true,            # Set to true to pause the sound at the current playback position
+      looping: true,           # Set to true to loop the sound/music until you stop it
+    }
+
   end
 
   def x
@@ -119,6 +128,7 @@ class Player
     end
 
     move
+    footsteps
   end
 
   def accelerate
@@ -147,12 +157,10 @@ class Player
   def move
     next_x = (x_pos + x_vel).clamp(w.half, $gtk.args.state.map.w - w.half)
     next_y = (y_pos + y_vel).clamp(h.half, $gtk.args.state.map.h - h.half)
-    col = false
 
     if collision?(next_x, y_pos)
       self.x_vel = 0
       self.x_accel = 0
-      col = true
     else
       self.x_pos = next_x
     end
@@ -160,16 +168,14 @@ class Player
     if collision?(x_pos, next_y)
       self.y_vel = 0
       self.y_accel = 0
-      col = true
     else
       self.y_pos = next_y
     end
+  end
 
-    if speed > 0.1 && (self.frame == 1 || self.frame == 3)
-      $gtk.args.outputs.sounds << 'sounds/sand.wav'
-    end
-
-    $gtk.args.outputs.sounds << 'sounds/thud.wav' if col
+  def footsteps
+    $gtk.args.audio[:footstep][:paused] = speed < 0.6
+    $gtk.args.audio[:footstep][:pitch] = 0.5 + ($gtk.args.state.map.tile_at(x_pos, y_pos, 0).id.to_f / 3)
   end
 
   def collision?(next_x, next_y)
@@ -196,7 +202,11 @@ class Player
   end
 
   def debug_info
-    "Player: #{x_pos}, #{y_pos} [A: #{x_accel}, #{y_accel}] [V: #{x_vel}, #{y_vel}] (Draw: #{x}, #{y}) (Dir: #{dir} #{source_x} #{source_y} #{frame}) "
+    "Player: #{x_pos.round(1)}, #{y_pos.round(1)}
+ [A: #{x_accel.round(1)}, #{y_accel.round(1)}]
+ [V: #{x_vel.round(1)}, #{y_vel.round(1)}]
+ (Draw: #{x}, #{y})
+ (Dir: #{dir} #{source_x} #{source_y} #{frame})"
   end
 
   private

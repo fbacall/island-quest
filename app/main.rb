@@ -5,7 +5,7 @@ require 'app/map.rb'
 
 def tick(args)
   debug = true
-  args.state.game_scale ||= 2
+  args.state.game_scale ||= 3
   if args.state.tick_count.zero?
     args.state.map = Map.new('maps/world.tmx')
     args.state.player = Player.new(args.state.map.w.half, args.state.map.h.half)
@@ -30,20 +30,19 @@ end
 
 def draw_debug(args)
   unless args.state.map.nil?
-    tile_x = (args.state.player.x_pos / 16).round
-    tile_y = (args.state.map.attributes.height.to_i - 1) - (args.state.player.y_pos / 16).round
-    tile1 = args.state.map.tile_at(tile_x, tile_y, 0)
-    tile2 = args.state.map.tile_at(tile_x, tile_y, 1)
+    tile1, tile2 = args.state.map.tiles_at(args.state.player.x_pos, args.state.player.y_pos)
     args.outputs.labels << [
       10,
       70,
-      "Tile: #{tile_x} #{tile_y} [Layer 1: #{tile1.id}] [Layer 2: #{tile2.id}]"
+      "Tile: #{tile1.tile_x} #{tile1.tile_y} [Layer 1: #{tile1.id}] [Layer 2: #{tile2.id}]",
+      -1
     ]
   end
 
   args.outputs.labels << [
     10,
     30,
-    args.state.player.debug_info
+    args.state.player.debug_info,
+    -1
   ]
 end

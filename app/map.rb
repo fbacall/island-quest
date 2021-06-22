@@ -1,5 +1,4 @@
 class Map
-
   attr_accessor :map, :attributes, :w, :h, :tile_h, :tile_w, :w_tiles, :h_tiles
 
   def initialize(path)
