@@ -33,16 +33,16 @@ class Player
     @z_index = 5
     $gtk.args.audio[:footstep] ||= {
       input: 'sounds/sand.wav',  # Filename
-      x: 0.0, y: 0.0, z: 0.0,   # Relative position to the listener, x, y, z from -1.0 to 1.0
-      gain: 0.2,                # Volume (0.0 to 1.0)
-      pitch: 1.0,               # Pitch of the sound (1.0 = original pitch)
-      paused: true,            # Set to true to pause the sound at the current playback position
-      looping: true,           # Set to true to loop the sound/music until you stop it
+      x: 0.0, y: 0.0, z: 0.0,    # Relative position to the listener, x, y, z from -1.0 to 1.0
+      gain: 0.2,                 # Volume (0.0 to 1.0)
+      pitch: 1.0,                # Pitch of the sound (1.0 = original pitch)
+      paused: true,              # Set to true to pause the sound at the current playback position
+      looping: true              # Set to true to loop the sound/music until you stop it
     }
-
   end
 
   def x
+    # Keep player in center of screen until they approach the map edge.
     if x_pos < camera_center_x
       x_pos
     elsif x_pos > ($gtk.args.state.map.w - camera_center_x)
@@ -127,6 +127,15 @@ class Player
       self.skipped_frames = 0
     end
 
+    $gtk.args.audio[:thud] ||= {
+      input: 'sounds/thud.wav',
+      x: 0.0, y: 0.0, z: 0.0,
+      gain: 1.0,
+      pitch: 1.0,
+      paused: true,
+      looping: false,
+    }
+
     move
     footsteps
   end
@@ -157,6 +166,7 @@ class Player
   def move
     next_x = (x_pos + x_vel).clamp(w.half, $gtk.args.state.map.w - w.half)
     next_y = (y_pos + y_vel).clamp(h.half, $gtk.args.state.map.h - h.half)
+    orig_speed = speed
 
     if collision?(next_x, y_pos)
       self.x_vel = 0
@@ -171,10 +181,23 @@ class Player
     else
       self.y_pos = next_y
     end
+
+    # thud!
+    if speed - orig_speed < -1.5
+      $gtk.args.audio[:thud][:paused] = false
+    end
   end
 
   def footsteps
-    $gtk.args.audio[:footstep][:paused] = speed < 0.6
+    s = speed
+    # "Debounce" the pausing of footstep sound to avoid rapid pausing causing horrible static sound + HTML5 crash
+    if s > 1.5
+      $gtk.args.audio[:footstep][:paused] = false
+    elsif s < 0.7
+      $gtk.args.audio[:footstep][:paused] = true
+    end
+
+    # Shift pitch based on tile, sand is higher pitch than long grass.
     $gtk.args.audio[:footstep][:pitch] = 0.5 + ($gtk.args.state.map.tile_at(x_pos, y_pos, 0).id.to_f / 3)
   end
 
@@ -182,23 +205,6 @@ class Player
     next_tile1, next_tile2 = $gtk.args.state.map.tiles_at(next_x, next_y)
 
     !(next_tile1.attributes.id < 3 && next_tile2.nil?)
-  end
-
-  def serialize
-    { x_pos: x_pos, y_pos: y_pos,
-      x_vel: x_vel, y_vel: y_vel,
-      x_accel: x_accel, y_accel: y_accel,
-      max_speed: max_speed, max_accel: max_accel, friction: friction, dir: dir, skipped_frames: skipped_frames, frame: frame }
-  end
-
-  # 2. Override the inspect method and return ~serialize.to_s~.
-  def inspect
-    serialize.to_s
-  end
-
-  # 3. Override to_s and return ~serialize.to_s~.
-  def to_s
-    serialize.to_s
   end
 
   def debug_info
