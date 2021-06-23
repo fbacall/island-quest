@@ -1,5 +1,10 @@
 # Island Quest
 
+- Engine: [DragonRuby](https://dragonruby.itch.io/dragonruby-gtk)
+- Map: [Tiled](https://www.mapeditor.org/)
+- Graphics: [Aseprite](https://www.aseprite.org/)
+- Sounds: [BFXR](https://www.bfxr.net/)
+
 ## Running
 
 ### On itch.io
