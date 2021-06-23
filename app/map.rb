@@ -11,7 +11,7 @@ class Map
     @h_tiles = map.attributes.height.to_i
     @w = @tile_w * @w_tiles
     @h = @tile_h * @h_tiles
-    @layers = map.layers.map.with_index { |layer, index| Layer.new(self, layer, index * 100) }
+    @layers = map.layers.map.with_index { |layer, index| MapLayer.new(self, layer, index * 100) }
   end
 
   def layers

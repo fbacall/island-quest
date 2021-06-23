@@ -1,4 +1,4 @@
-class Layer
+class MapLayer
   attr_sprite
 
   attr_accessor :z_index, :target, :target_key, :map
