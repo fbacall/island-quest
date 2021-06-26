@@ -49,7 +49,7 @@ class Player
       camera_center_x + (x_pos - ($gtk.args.state.map.w - camera_center_x))
     else
       camera_center_x
-    end * $gtk.args.state.game_scale
+    end * $gtk.args.state.game_scale - w.half
   end
 
   def y
@@ -59,7 +59,7 @@ class Player
       camera_center_y + (y_pos - ($gtk.args.state.map.h - camera_center_y))
     else
       camera_center_y
-    end * $gtk.args.state.game_scale
+    end * $gtk.args.state.game_scale - h.half
   end
 
   def w
@@ -168,18 +168,18 @@ class Player
     next_y = (y_pos + y_vel).clamp(h.half, $gtk.args.state.map.h - h.half)
     orig_speed = speed
 
-    if collision?(next_x, y_pos)
+    if collision?(next_x + (x_vel > 0 ? 8 : -8), y_pos)
       self.x_vel = 0
       self.x_accel = 0
     else
-      self.x_pos = next_x
+      self.x_pos = next_x.round
     end
 
-    if collision?(x_pos, next_y)
+    if collision?(x_pos, next_y + (y_vel > 0 ? 8 : -8))
       self.y_vel = 0
       self.y_accel = 0
     else
-      self.y_pos = next_y
+      self.y_pos = next_y.round
     end
 
     # thud!
@@ -204,7 +204,7 @@ class Player
   def collision?(next_x, next_y)
     next_tile1, next_tile2 = $gtk.args.state.map.tiles_at(next_x, next_y)
 
-    !(next_tile1.attributes.id < 3 && next_tile2.nil?)
+    (next_tile1.attributes.id.to_i >= 3) || next_tile2 && next_tile2.properties.collide?
   end
 
   def debug_info
