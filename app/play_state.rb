@@ -1,23 +1,14 @@
-class PlayState
-  def init(prev_state)
-    @prev_state = prev_state
+class PlayState < State
+  def init
+    super
     $gtk.args.state.debug = false if $gtk.args.state.debug.nil? # Can't use `||=` because the value can be `false`
     $gtk.args.state.game_scale = 3
     $gtk.args.state.map = Map.new('maps/world.tmx')
     $gtk.args.state.player = Player.new($gtk.args.state.map.w.half, $gtk.args.state.map.h.half)
-    @paused = false
-  end
-
-  def pause
-    @paused = true
-  end
-
-  def resume
-    @paused = false
   end
 
   def handle_input(args)
-    return if @paused
+    super
     args.state.player.x_accel = 0
     args.state.player.y_accel = 0
     args.state.player.y_accel = 1 if args.inputs.keyboard.key_held.w
@@ -27,11 +18,11 @@ class PlayState
     args.state.debug = !args.state.debug if args.inputs.keyboard.key_down.one
     (args.state.game_scale -= 1) if args.inputs.keyboard.key_down.open_square_brace && args.state.game_scale > 1
     (args.state.game_scale += 1) if args.inputs.keyboard.key_down.close_square_brace && args.state.game_scale < 5
-    $state_manager.push_state(PausedState.new) if args.inputs.keyboard.key_down.p
+    push_state(PausedState.new) if args.inputs.keyboard.key_down.p
   end
 
   def update(args)
-    return if @paused
+    super
     args.state.player.tick
   end
 

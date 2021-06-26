@@ -460,21 +460,64 @@
    <property name="collide" type="bool" value="true"/>
   </properties>
  </tile>
- <wangsets>
-  <wangset name="Unnamed Set" type="corner" tile="-1">
-   <wangcolor name="" color="#ff0000" tile="-1" probability="1"/>
-   <wangcolor name="" color="#00ff00" tile="-1" probability="1"/>
-   <wangtile tileid="0" wangid="0,1,0,1,0,1,0,1"/>
-   <wangtile tileid="1" wangid="0,2,0,2,0,2,0,2"/>
-   <wangtile tileid="18" wangid="0,1,0,1,0,1,0,1"/>
-   <wangtile tileid="19" wangid="0,1,0,1,0,1,0,1"/>
-   <wangtile tileid="20" wangid="0,1,0,1,0,1,0,1"/>
-   <wangtile tileid="34" wangid="0,1,0,1,0,1,0,1"/>
-   <wangtile tileid="35" wangid="0,1,0,1,0,1,0,1"/>
-   <wangtile tileid="36" wangid="0,1,0,1,0,1,0,1"/>
-   <wangtile tileid="50" wangid="0,1,0,1,0,1,0,1"/>
-   <wangtile tileid="51" wangid="0,1,0,1,0,1,0,1"/>
-   <wangtile tileid="52" wangid="0,1,0,1,0,1,0,1"/>
-  </wangset>
- </wangsets>
+ <tile id="166">
+  <properties>
+   <property name="collide" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="167">
+  <properties>
+   <property name="collide" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="168">
+  <properties>
+   <property name="collide" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="182">
+  <properties>
+   <property name="collide" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="183">
+  <properties>
+   <property name="collide" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="184">
+  <properties>
+   <property name="collide" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="198">
+  <properties>
+   <property name="collide" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="199">
+  <properties>
+   <property name="collide" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="200">
+  <properties>
+   <property name="collide" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="214">
+  <properties>
+   <property name="collide" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="215">
+  <properties>
+   <property name="collide" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="216">
+  <properties>
+   <property name="collide" type="bool" value="true"/>
+  </properties>
+ </tile>
 </tileset>

@@ -8,11 +8,15 @@ class StateManager
     @states.last
   end
 
+  def previous_state
+    @states[-2]
+  end
+
   def push_state(state)
     prev = current_state
     prev.pause if prev
     @states.push(state)
-    current_state.init(prev)
+    current_state.init
   end
 
   def pop_state
@@ -21,8 +25,8 @@ class StateManager
   end
 
   def set_state(state)
-    prev = @states.pop
+    @states.pop
     @states.push(state)
-    current_state.init(prev)
+    current_state.init
   end
 end
