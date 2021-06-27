@@ -6,6 +6,7 @@ module Tiled
 
     def initialize(map)
       @map = map
+      @props = {}
     end
 
     # Creates method for accessing new property by name. For boolean type adds `?` method
@@ -20,13 +21,17 @@ module Tiled
     # @param value [Integer, Float, Boolean, String] value of added property
     # @return [Tiled::Properties] self
     def add(name, type = 'string', value)
-      instance_variable_set("@#{name}", value)
+      @props[name.to_sym] = value
       instance_variable_set("@#{name}_type", type)
-      define_singleton_method(name) { instance_variable_get(:"@#{name}") }
+      define_singleton_method(name) { self[name] }
       define_singleton_method("#{name}_type") { instance_variable_get(:"@#{name}_type") }
-      define_singleton_method("#{name}?") { !!instance_variable_get(:"@#{name}") } if type == 'bool'
+      define_singleton_method("#{name}?") { !!self[name] } if type == 'bool'
 
       self
+    end
+
+    def [](name)
+      @props[name.to_sym]
     end
 
     # Initialize properties with data from xml hash
