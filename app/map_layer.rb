@@ -3,7 +3,7 @@ class MapLayer
 
   attr_accessor :z_index, :target, :target_key, :map
 
-  def initialize(map, tiled_layer, z_index)
+  def initialize(map, tiled_layer)
     @map = map
     @target_key = "layer_#{tiled_layer.attributes.id}".to_sym
     @target = $gtk.args.render_target(@target_key)
@@ -11,7 +11,7 @@ class MapLayer
     @target.height = map.h
     @target.sprites << tiled_layer.sprites
     super
-    @z_index = z_index
+    @z_index = tiled_layer.properties.zindex
   end
 
   def x

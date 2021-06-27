@@ -24,13 +24,13 @@ class Player
     @angle = 0
     @source_w = 16
     @source_h = 16
-    @max_speed = 3
-    @max_accel = 0.8
+    @max_speed = 2
+    @max_accel = 0.4
     @friction = 0.25
     @skipped_frames = 0
     @frame = 0
     @dir = 'down'
-    @z_index = 5
+    @z_index = 100
     $gtk.args.audio[:footstep] ||= {
       input: 'sounds/sand.wav',  # Filename
       x: 0.0, y: 0.0, z: 0.0,    # Relative position to the listener, x, y, z from -1.0 to 1.0
@@ -63,11 +63,11 @@ class Player
   end
 
   def w
-    16 * $gtk.args.state.game_scale
+    @source_w * $gtk.args.state.game_scale
   end
 
   def h
-    16 * $gtk.args.state.game_scale
+    @source_h * $gtk.args.state.game_scale
   end
 
   def speed
@@ -190,21 +190,26 @@ class Player
 
   def footsteps
     s = speed
+    m = max_speed
     # "Debounce" the pausing of footstep sound to avoid rapid pausing causing horrible static sound + HTML5 crash
-    if s > 1.5
+    if s > m.half
       $gtk.args.audio[:footstep][:paused] = false
-    elsif s < 0.7
+    elsif s < m * 0.1
       $gtk.args.audio[:footstep][:paused] = true
     end
 
     # Shift pitch based on tile, sand is higher pitch than long grass.
-    $gtk.args.audio[:footstep][:pitch] = 0.5 + ($gtk.args.state.map.tile_at(x_pos, y_pos, 0).id.to_f / 3)
+    #$gtk.args.audio[:footstep][:pitch] = 0.5 + ($gtk.args.state.map.tile_at(x_pos, y_pos, 0).id.to_f / 3)
   end
 
   def collision?(next_x, next_y)
     next_tile1, next_tile2 = $gtk.args.state.map.tiles_at(next_x, next_y)
 
-    (next_tile1.attributes.id.to_i >= 3) || next_tile2 && next_tile2.properties.collide?
+    !walkable_terrains.include?(next_tile1.properties[:terrain]) || next_tile2 && next_tile2.properties.collide?
+  end
+
+  def walkable_terrains
+    t = ['sand', 'grass', 'long_grass']
   end
 
   def debug_info
