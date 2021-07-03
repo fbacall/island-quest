@@ -6,7 +6,6 @@ class PausedState < MenuState
   end
 
   def handle_input(args)
-    super
     handle_option('Resume') if args.inputs.keyboard.key_down.escape
   end
 

@@ -1,7 +1,7 @@
 class MenuState < State
   def init
     super
-    $gtk.args.state.menu_option ||= 0
+    $gtk.args.state.menu_option = 0
   end
 
   def handle_input(args)
@@ -17,7 +17,7 @@ class MenuState < State
   end
 
   def change_option(dir)
-    ($gtk.args.state.menu_option += dir).clamp(0, @options.length - 1)
+    $gtk.args.state.menu_option = ($gtk.args.state.menu_option + dir).clamp(0, @options.length - 1)
     $gtk.args.audio[:menu] = { input: 'sounds/menu.wav' }
   end
 

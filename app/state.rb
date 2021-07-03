@@ -12,11 +12,9 @@ class State
   end
 
   def handle_input(args)
-    return if @paused
   end
 
   def update(args)
-    return if @paused
   end
 
   def draw(args)

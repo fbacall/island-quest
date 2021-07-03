@@ -1,0 +1,26 @@
+[
+  {
+    "actor": "player",
+    "speech": "Oh dear, looks like I'm stranded here on this island.",
+    "pos": "bottom"
+  },
+  {
+    "actor": "player",
+    "speech": "Yep, it certainly seems that way.",
+    "pos": "top"
+  },
+  {
+    "actor": "player",
+    "speech": "I'm talking to myself now.",
+    "pos": "bottom"
+  },
+  {
+    "actor": "player",
+    "speech": "Yes.",
+    "pos": "top"
+  },
+  {
+    "speech": "OBJECTIVE: Find a way off the island!",
+    "pos": "middle"
+  }
+]

@@ -220,6 +220,18 @@ class Player
  (Dir: #{dir} #{source_x} #{source_y} #{frame})"
   end
 
+  def dialogue_avatar
+    {
+      path: path,
+      w: 32 * $gtk.args.state.avatar_scale,
+      h: 20 * $gtk.args.state.avatar_scale,
+      source_x: 16,
+      source_y: 54,
+      source_w: 16,
+      source_h: 10,
+    }
+  end
+
   private
 
   def mag(x, y)
