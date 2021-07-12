@@ -1,8 +1,6 @@
 class DialogueState < State
   def initialize(script, participants = {})
     @script = $gtk.parse_json($gtk.read_file("dialogue/#{script}.json"))
-    puts "script:"
-    puts @script.inspect
     @participants = participants
   end
 
@@ -13,6 +11,8 @@ class DialogueState < State
     reset
     @speech_index = -1
     @segment_index = -1
+    @delay = 0
+    @speed = 4
   end
 
   def reset(pos = nil)
@@ -42,13 +42,17 @@ class DialogueState < State
   end
 
   def handle_input(args)
+    @speed = 4
+    if args.inputs.keyboard.key_held.shift
+      @speed = 1
+      @delay = 0
+    end
     scroll(-1) if args.inputs.keyboard.key_down.w
     scroll(1) if args.inputs.keyboard.key_down.s
-    resume if args.inputs.keyboard.key_down.space || args.inputs.keyboard.key_down.enter
+    resume if @paused && (args.inputs.keyboard.key_down.space || args.inputs.keyboard.key_down.enter)
   end
 
   def scroll(direction)
-
   end
 
   def update(args)
@@ -56,20 +60,19 @@ class DialogueState < State
 
     if @speech_index == -1
       next_segment
-    elsif args.tick_count % 4 == ((@speech_index * 7) % 4) # Add some pseudo-randomness to dialogue speed
+    elsif @delay > 0
+      @delay -= 1
+    elsif (args.tick_count * 7) % @speed == 0 # Add some pseudo-randomness to dialogue speed
       next_char
     end
   end
 
   def next_segment
     @segment_index += 1
-    puts @segment_index
     if @segment_index >= @script.length
       pop_state
     else
       @segment = @script[@segment_index]
-      puts "seg:"
-      puts @segment.inspect
       activate(@segment['pos'])
       set_actor(@segment['actor'], @segment['pos'])
       next_char
@@ -84,8 +87,13 @@ class DialogueState < State
     else
       char = @segment['speech'][@speech_index]
       pos = @segment['pos']
-      unless %w(- : ; " ' , . \n \t).include?(char)
-
+      case char
+      when ','
+        @delay = 15
+      when '.'
+        @delay = 25
+      when *%w(- : ; " ' \n \t \s)
+      else
         $gtk.args.audio[:talk] = { input: 'sounds/talk.wav' }
       end
       push_char(char, pos)
@@ -93,14 +101,14 @@ class DialogueState < State
   end
 
   def draw(args)
-    text_width = 24
-    text_height = 60
+    text_size = 18
+    text_width, text_height = $gtk.calcstringbox('A', text_size)
+    third_height = (args.grid.h / 3).to_i
     avatar_width = 200
     max_chars = ((args.grid.w - avatar_width - (3 * text_width)) / text_width).floor
-    max_lines = 4
+    max_lines = (third_height / text_height).floor
 
     previous_state&.draw(args)
-    third_height = (args.grid.h / 3).to_i
     @sections.each do |pos, data|
       avatar_x = 0
       avatar_y = text_height
@@ -144,12 +152,12 @@ class DialogueState < State
 
       if data[:text] && data[:text].length > 0
         a = data[:active] ? 255 : 160
-        $gtk.args.string.wrapped_lines(data[:text], max_chars).each_with_index do |line, i|
+        args.string.wrapped_lines(data[:text], max_chars).each_with_index do |line, i|
           args.outputs.labels << {
             x: text_x,
             y: text_y + text_height * (max_lines - i),
             text: line,
-            size_enum: 20,
+            size_enum: text_size,
             alignment_enum: align,
             r: 255,
             g: 255,
@@ -168,7 +176,7 @@ class DialogueState < State
             x: args.grid.w.half,
             y: offset_y + text_height,
             text: 'Continue',
-            size_enum: 20,
+            size_enum: text_size,
             alignment_enum: 1,
             r: col,
             g: col,
