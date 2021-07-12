@@ -31,6 +31,10 @@ module Tiled
           tileset = Tileset.new(self)
           tileset.from_xml_hash(child)
           tilesets << tileset
+        when 'objectgroup'
+          object_group = ObjectGroup.new(self)
+          object_group.from_xml_hash(child)
+          object_groups << object_group
         end
       end
     end
@@ -41,6 +45,10 @@ module Tiled
 
     def tilesets
       @tilesets ||= []
+    end
+
+    def object_groups
+      @object_groups ||= []
     end
 
     def properties
@@ -60,7 +68,7 @@ module Tiled
     end
 
     def exclude_from_serialize
-      super + %w[tiles_cache tilesets layers]
+      super + %w[tiles_cache tilesets layers object_groups]
     end
   end
 end
