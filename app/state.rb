@@ -1,4 +1,6 @@
 class State
+  attr_accessor :previous_state
+
   def init
     @paused = false
   end
@@ -30,9 +32,5 @@ class State
 
   def set_state(state)
     $state_manager.set_state(state)
-  end
-
-  def previous_state
-    $state_manager.previous_state
   end
 end

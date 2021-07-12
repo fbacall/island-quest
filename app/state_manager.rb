@@ -8,13 +8,12 @@ class StateManager
     @states.last
   end
 
-  def previous_state
-    @states[-2]
-  end
-
   def push_state(state)
     prev = current_state
-    prev.pause if prev
+    if prev
+      prev.pause
+      state.previous_state = prev
+    end
     @states.push(state)
     current_state.init
   end
