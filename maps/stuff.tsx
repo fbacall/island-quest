@@ -450,17 +450,17 @@
  </tile>
  <tile id="82">
   <properties>
-   <property name="collide" type="bool" value="true"/>
+   <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="83">
   <properties>
-   <property name="collide" type="bool" value="true"/>
+   <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="84">
   <properties>
-   <property name="collide" type="bool" value="true"/>
+   <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="85">
@@ -608,12 +608,12 @@
    <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="112">
+ <tile id="112" type="Interactable">
   <properties>
    <property name="collide" type="bool" value="true"/>
   </properties>
  </tile>
- <tile id="113">
+ <tile id="113" type="Interactable">
   <properties>
    <property name="collide" type="bool" value="false"/>
   </properties>
@@ -777,12 +777,12 @@
    <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="144">
+ <tile id="144" type="Interactable">
   <properties>
    <property name="collide" type="bool" value="true"/>
   </properties>
  </tile>
- <tile id="145">
+ <tile id="145" type="Interactable">
   <properties>
    <property name="collide" type="bool" value="false"/>
   </properties>
@@ -946,32 +946,32 @@
    <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="176">
+ <tile id="176" type="Item">
   <properties>
    <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="177">
+ <tile id="177" type="Item">
   <properties>
    <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="178">
+ <tile id="178" type="Item">
   <properties>
    <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="179">
+ <tile id="179" type="Item">
   <properties>
    <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="180">
+ <tile id="180" type="Item">
   <properties>
    <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="181">
+ <tile id="181" type="Item">
   <properties>
    <property name="collide" type="bool" value="false"/>
   </properties>
@@ -1031,12 +1031,12 @@
    <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="192">
+ <tile id="192" type="Interactable">
   <properties>
    <property name="collide" type="bool" value="true"/>
   </properties>
  </tile>
- <tile id="193">
+ <tile id="193" type="Interactable">
   <properties>
    <property name="collide" type="bool" value="false"/>
   </properties>
@@ -1079,11 +1079,13 @@
  <tile id="201">
   <properties>
    <property name="collide" type="bool" value="false"/>
+   <property name="terrain" value="water"/>
   </properties>
  </tile>
  <tile id="202">
   <properties>
    <property name="collide" type="bool" value="false"/>
+   <property name="terrain" value="water"/>
   </properties>
  </tile>
  <tile id="203">
@@ -1111,12 +1113,12 @@
    <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="208">
+ <tile id="208" type="Interactable">
   <properties>
    <property name="collide" type="bool" value="true"/>
   </properties>
  </tile>
- <tile id="209">
+ <tile id="209" type="Interactable">
   <properties>
    <property name="collide" type="bool" value="false"/>
   </properties>
@@ -1126,12 +1128,12 @@
    <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="211">
+ <tile id="211" type="Interactable">
   <properties>
    <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="212">
+ <tile id="212" type="Interactable">
   <properties>
    <property name="collide" type="bool" value="false"/>
   </properties>
@@ -1159,11 +1161,13 @@
  <tile id="217">
   <properties>
    <property name="collide" type="bool" value="false"/>
+   <property name="terrain" value="water"/>
   </properties>
  </tile>
  <tile id="218">
   <properties>
    <property name="collide" type="bool" value="false"/>
+   <property name="terrain" value="water"/>
   </properties>
  </tile>
  <tile id="219">
@@ -1239,11 +1243,13 @@
  <tile id="233">
   <properties>
    <property name="collide" type="bool" value="false"/>
+   <property name="terrain" value="water"/>
   </properties>
  </tile>
  <tile id="234">
   <properties>
    <property name="collide" type="bool" value="false"/>
+   <property name="terrain" value="water"/>
   </properties>
  </tile>
  <tile id="235">
@@ -1419,6 +1425,10 @@
    <wangtile tileid="187" wangid="0,5,0,5,0,5,0,4"/>
    <wangtile tileid="188" wangid="0,5,0,4,0,5,0,4"/>
    <wangtile tileid="189" wangid="0,4,0,5,0,4,0,5"/>
+  </wangset>
+  <wangset name="River" type="edge" tile="-1">
+   <wangcolor name="Grass" color="#ff0000" tile="-1" probability="1"/>
+   <wangcolor name="Water" color="#00ff00" tile="-1" probability="1"/>
   </wangset>
  </wangsets>
 </tileset>
