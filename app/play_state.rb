@@ -6,7 +6,7 @@ class PlayState < State
     $gtk.args.state.avatar_scale = 8
     $gtk.args.state.map = Map.new('maps/world.tmx')
     $gtk.args.state.player = Player.new($gtk.args.state.map.w.half, $gtk.args.state.map.h.half)
-    push_state(DialogueState.new('intro', 'player' => $gtk.args.state.player))
+    #push_state(DialogueState.new('intro', 'player' => $gtk.args.state.player))
   end
 
   def handle_input(args)
@@ -21,6 +21,10 @@ class PlayState < State
     (args.state.game_scale += 1) if args.inputs.keyboard.key_down.close_square_brace && args.state.game_scale < 10
     push_state(PausedState.new) if args.inputs.keyboard.key_down.escape
     push_state(DialogueState.new('intro', 'player' => args.state.player)) if args.inputs.keyboard.key_down.i
+    push_state(ScriptState.new('test')) if args.inputs.keyboard.key_down.x
+    if args.state.player.interactables&.any? && args.inputs.keyboard.key_down.enter || args.inputs.keyboard.key_down.space
+      puts args.state.player.interactables.inspect
+    end
   end
 
   def update(args)
@@ -31,6 +35,26 @@ class PlayState < State
     draw_debug(args) if args.state.debug
 
     args.outputs.sprites << (args.state.map.layers + [args.state.player]).sort_by(&:z_index)
+
+    if args.state.player.interactables&.any?
+      args.outputs.sprites << {
+        path: 'gfx/tileset.png',
+        x: args.state.player.x,
+        y: args.state.player.y + 16 * $gtk.args.state.game_scale,
+        w: 16 * $gtk.args.state.game_scale,
+        h: 16 * $gtk.args.state.game_scale,
+        source_x: 16,
+        source_y: 0,
+        source_w: 16,
+        source_h: 16,
+      }
+    end
+  end
+
+  # Stop footstep sounds
+  def pause
+    super
+    $gtk.args.audio[:footstep][:paused] = true if $gtk.args.audio[:footstep]
   end
 
   private

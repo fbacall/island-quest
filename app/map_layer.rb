@@ -15,11 +15,11 @@ class MapLayer
   end
 
   def x
-    (($gtk.args.state.player.x / $gtk.args.state.game_scale) - $gtk.args.state.player.x_pos) * $gtk.args.state.game_scale
+    (($gtk.args.state.player.x / $gtk.args.state.game_scale) - $gtk.args.state.player.x_pos).round * $gtk.args.state.game_scale
   end
 
   def y
-    (($gtk.args.state.player.y / $gtk.args.state.game_scale) - $gtk.args.state.player.y_pos) * $gtk.args.state.game_scale
+    (($gtk.args.state.player.y / $gtk.args.state.game_scale) - $gtk.args.state.player.y_pos).round * $gtk.args.state.game_scale
   end
 
   def w

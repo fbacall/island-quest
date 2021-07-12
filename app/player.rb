@@ -1,10 +1,14 @@
 class Player
   attr_sprite
 
+  DIRECTION_MATRIX = [-1, 0, 1].product([-1, 0, 1])
+
   attr_accessor :x_pos, :y_pos, # World position
                 :x_vel, :y_vel,
                 :x_accel, :y_accel,
                 :max_speed, :max_accel, :friction, :dir, :skipped_frames, :frame, :z_index
+
+  attr_reader :interactables
 
   def initialize(x, y)
     super
@@ -137,7 +141,7 @@ class Player
     }
 
     move
-    footsteps
+    @interactables = nearby_interactables
   end
 
   def accelerate
@@ -172,20 +176,22 @@ class Player
       self.x_vel = 0
       self.x_accel = 0
     else
-      self.x_pos = next_x.round
+      self.x_pos = next_x
     end
 
     if collision?(x_pos, next_y + (y_vel > 0 ? 8 : -8))
       self.y_vel = 0
       self.y_accel = 0
     else
-      self.y_pos = next_y.round
+      self.y_pos = next_y
     end
 
     # thud!
     if speed - orig_speed < -1.5
       $gtk.args.audio[:thud][:paused] = false
     end
+
+    footsteps
   end
 
   def footsteps
@@ -206,6 +212,15 @@ class Player
     next_tile1, next_tile2 = $gtk.args.state.map.tiles_at(next_x, next_y)
 
     !walkable_terrains.include?(next_tile1.properties[:terrain]) || next_tile2 && next_tile2.properties.collide?
+  end
+
+  def nearby_interactables
+    dist = 10
+    surrounding_tiles = DIRECTION_MATRIX.map do |x, y|
+      $gtk.args.state.map.tile_at(x_pos + (x * dist), y_pos + (y * dist), 1)
+    end
+
+    surrounding_tiles.select { |tile| tile && (tile.type == 'Item' || tile.type == 'Interactable') }
   end
 
   def walkable_terrains

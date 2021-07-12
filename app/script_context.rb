@@ -1,0 +1,44 @@
+class ScriptContext
+  def initialize(code)
+    @code = code
+  end
+
+  def run
+    instance_eval(@code)
+  end
+
+  def move(actor, x, y)
+    action(
+      -> () {
+        actor.x_pos <= x ? actor.x_accel = 1 : actor.x_accel = -1
+        actor.y_pos <= y ? actor.y_accel = 1 : actor.y_accel = -1
+        actor.tick
+      },
+      -> () {
+        (actor.x_pos - x).abs < 5 && (actor.y_pos - y).abs < 5
+      })
+  end
+
+  def wait(ticks)
+    end_tick = $gtk.args.tick_count + ticks
+    action(-> () {}, -> () { $gtk.args.tick_count >= end_tick })
+  end
+
+  def start_dialogue(name)
+    $state_manager.push_state(DialogueState.new(name, 'player' => $gtk.args.state.player))
+    Fiber.yield
+  end
+
+  def player
+    $gtk.args.state.player
+  end
+
+  private
+
+  def action(tick_proc, end_condition)
+    until end_condition.call
+      tick_proc.call
+      Fiber.yield
+    end
+  end
+end
