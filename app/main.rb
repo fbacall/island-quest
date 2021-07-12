@@ -12,9 +12,8 @@ require 'app/intro_state.rb'
 
 def tick(args)
   $state_manager ||= StateManager.new(IntroState.new)
-  state = $state_manager.current_state
 
-  state.handle_input(args)
-  state.update(args)
-  state.draw(args)
+  $state_manager.current_state.handle_input(args)
+  $state_manager.current_state.update(args)
+  $state_manager.current_state.draw(args)
 end
