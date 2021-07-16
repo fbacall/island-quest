@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-up" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="1">
+<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-up" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="5">
  <tileset firstgid="1" source="stuff.tsx"/>
  <layer id="5" name="Base" width="100" height="100">
   <properties>
@@ -322,4 +322,13 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup id="6" name="Stuff">
+  <properties>
+   <property name="zindex" type="int" value="50"/>
+  </properties>
+  <object id="1" name="Hamma" gid="178" x="720" y="528" width="16" height="16"/>
+  <object id="2" name="Flippa" gid="180" x="912" y="560" width="16" height="16"/>
+  <object id="3" name="Spade" gid="179" x="352" y="880" width="16" height="16"/>
+  <object id="4" name="Machete" gid="177" x="960" y="1024" width="16" height="16"/>
+ </objectgroup>
 </map>
