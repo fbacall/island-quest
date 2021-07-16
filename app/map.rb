@@ -38,7 +38,7 @@ class Map
   end
 
   def tile_coords(x, y)
-    [(x / tile_w).round, (h_tiles - 1) - (y / tile_h).round]
+    [(x / tile_w).floor, (h_tiles - 1) - (y / tile_h).floor]
   end
 
   def tile_coords_in(x1, y1, x2, y2)

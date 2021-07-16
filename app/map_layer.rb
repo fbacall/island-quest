@@ -14,20 +14,28 @@ class MapLayer
     @z_index = tiled_layer.properties.zindex
   end
 
+  def x_pos
+    map.w.half
+  end
+
+  def y_pos
+    map.h.half
+  end
+
   def x
-    (($gtk.args.state.player.x / $gtk.args.state.game_scale) - $gtk.args.state.player.x_pos).round * $gtk.args.state.game_scale
+    $camera.draw_x(self)
   end
 
   def y
-    (($gtk.args.state.player.y / $gtk.args.state.game_scale) - $gtk.args.state.player.y_pos).round * $gtk.args.state.game_scale
+    $camera.draw_y(self)
   end
 
   def w
-    map.w * $gtk.args.state.game_scale
+    map.w * $camera.scale
   end
 
   def h
-    map.h * $gtk.args.state.game_scale
+    map.h * $camera.scale
   end
 
   def path

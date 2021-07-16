@@ -1,4 +1,5 @@
 require 'lib/tiled/tiled.rb'
+require 'app/camera.rb'
 require 'app/entities/player.rb'
 require 'app/map_layer.rb'
 require 'app/map.rb'

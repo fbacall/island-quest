@@ -48,32 +48,19 @@ class Player
   end
 
   def x
-    # Keep player in center of screen until they approach the map edge.
-    if x_pos < camera_center_x
-      x_pos
-    elsif x_pos > ($gtk.args.state.map.w - camera_center_x)
-      camera_center_x + (x_pos - ($gtk.args.state.map.w - camera_center_x))
-    else
-      camera_center_x
-    end * $gtk.args.state.game_scale - w.half
+    $camera.draw_x(self)
   end
 
   def y
-    if y_pos < camera_center_y
-      y_pos
-    elsif y_pos > ($gtk.args.state.map.h - camera_center_y)
-      camera_center_y + (y_pos - ($gtk.args.state.map.h - camera_center_y))
-    else
-      camera_center_y
-    end * $gtk.args.state.game_scale - h.half
+    $camera.draw_y(self)
   end
 
   def w
-    @source_w * $gtk.args.state.game_scale
+    @source_w * $camera.scale
   end
 
   def h
-    @source_h * $gtk.args.state.game_scale
+    @source_h * $camera.scale
   end
 
   def speed
@@ -155,13 +142,13 @@ class Player
   end
 
   def collide
-    if collision?(x_pos + (x_vel > 0 ? 8 : -8), prev_y)
+    if collision?(x_pos, prev_y)
       self.x_vel = 0
       self.x_accel = 0
       self.x_pos = prev_x
     end
 
-    if collision?(prev_x, y_pos + (y_vel > 0 ? 8 : -8))
+    if collision?(prev_x, y_pos)
       self.y_vel = 0
       self.y_accel = 0
       self.y_pos = prev_y
@@ -217,8 +204,12 @@ class Player
     #$gtk.args.audio[:footstep][:pitch] = 0.5 + ($gtk.args.state.map.tile_at(x_pos, y_pos, 0).id.to_f / 3)
   end
 
-  def collision?(next_x, next_y)
-    next_tiles1, next_tiles2 = $gtk.args.state.map.tiles_in(next_x - source_w.half, next_y + source_h.half, next_x + source_w.half, next_y - source_h.half)
+  def collision?(x, y)
+    next_tiles1, next_tiles2 = $gtk.args.state.map.tiles_in(
+      x - source_w.third,
+      y + source_h.third,
+      x + source_w.third,
+      y - source_h.third)
 
     next_tiles1.any? { |t| !walkable_terrains.include?(t.properties[:terrain]) } || next_tiles2.any? { |t| t.properties.collide? }
   end
@@ -266,13 +257,5 @@ class Player
     m = mag(x, y)
     return [0, 0] if m == 0
     [x * factor / m, y * factor / m]
-  end
-
-  def camera_center_x
-    $gtk.args.grid.center_x / $gtk.args.state.game_scale
-  end
-
-  def camera_center_y
-    $gtk.args.grid.center_y / $gtk.args.state.game_scale
   end
 end
