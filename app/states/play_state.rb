@@ -64,5 +64,7 @@ class PlayState < State
     tile1, tile2 = args.state.map.tiles_at(args.state.player.x_pos, args.state.player.y_pos)
     args.outputs.labels << [10, 70, "Tile: #{tile_x} #{tile_y} [Layer 1: #{tile1.id}] [Layer 2: #{tile2.id}] [T: #{tile1.properties[:terrain]}", -1]
     args.outputs.labels << [10, 30, args.state.player.debug_info, -1]
+    args.outputs.labels << [args.grid.w - 80, args.grid.h - 10, 'FPS: ' + $gtk.current_framerate.round(1).to_s, -1]
+
   end
 end

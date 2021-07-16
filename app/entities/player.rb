@@ -4,6 +4,8 @@ class Player
   DIRECTION_MATRIX = [-1, 0, 1].product([-1, 0, 1])
 
   attr_accessor :x_pos, :y_pos, # World position
+                :prev_x, :prev_y, # Last frame position
+                :prev_speed, # Last frame speed (for impulse calc)
                 :x_vel, :y_vel,
                 :x_accel, :y_accel,
                 :max_speed, :max_accel, :friction, :dir, :skipped_frames, :frame, :z_index
@@ -108,39 +110,17 @@ class Player
   end
 
   def tick
+    @prev_x = x_pos
+    @prev_y = y_pos
+    @prev_speed = speed
     accelerate
     apply_friction
-    unless x_accel == 0 && y_accel == 0
-      if x_accel.abs > y_accel.abs
-        if x_accel > 0
-          self.dir = 'right'
-        else
-          self.dir = 'left'
-        end
-      else
-        if y_accel > 0
-          self.dir = 'up'
-        else
-          self.dir = 'down'
-        end
-      end
+    animate
+    if speed > 0
+      move
+      collide
     end
-
-    if (self.skipped_frames += 1) >= frameskip
-      self.frame = (frame + 1) % 4
-      self.skipped_frames = 0
-    end
-
-    $gtk.args.audio[:thud] ||= {
-      input: 'sounds/thud.wav',
-      x: 0.0, y: 0.0, z: 0.0,
-      gain: 1.0,
-      pitch: 1.0,
-      paused: true,
-      looping: false,
-    }
-
-    move
+    footsteps
     @interactables = nearby_interactables
   end
 
@@ -168,30 +148,59 @@ class Player
   end
 
   def move
-    next_x = (x_pos + x_vel).clamp(w.half, $gtk.args.state.map.w - w.half)
-    next_y = (y_pos + y_vel).clamp(h.half, $gtk.args.state.map.h - h.half)
-    orig_speed = speed
+    self.x_pos = (x_pos + x_vel).clamp(w.half, $gtk.args.state.map.w - w.half)
+    self.y_pos = (y_pos + y_vel).clamp(h.half, $gtk.args.state.map.h - h.half)
 
-    if collision?(next_x + (x_vel > 0 ? 8 : -8), y_pos)
+    true
+  end
+
+  def collide
+    if collision?(x_pos + (x_vel > 0 ? 8 : -8), prev_y)
       self.x_vel = 0
       self.x_accel = 0
-    else
-      self.x_pos = next_x
+      self.x_pos = prev_x
     end
 
-    if collision?(x_pos, next_y + (y_vel > 0 ? 8 : -8))
+    if collision?(prev_x, y_pos + (y_vel > 0 ? 8 : -8))
       self.y_vel = 0
       self.y_accel = 0
-    else
-      self.y_pos = next_y
+      self.y_pos = prev_y
     end
 
     # thud!
-    if speed - orig_speed < -1.5
-      $gtk.args.audio[:thud][:paused] = false
+    if speed - @prev_speed < -1.5
+      $gtk.args.audio[:thud] ||= {
+        input: 'sounds/thud.wav',
+        x: 0.0, y: 0.0, z: 0.0,
+        gain: 1.0,
+        pitch: 1.0,
+        paused: false,
+        looping: false,
+      }
+    end
+  end
+
+  def animate
+    unless x_accel == 0 && y_accel == 0
+      if x_accel.abs > y_accel.abs
+        if x_accel > 0
+          self.dir = 'right'
+        else
+          self.dir = 'left'
+        end
+      else
+        if y_accel > 0
+          self.dir = 'up'
+        else
+          self.dir = 'down'
+        end
+      end
     end
 
-    footsteps
+    if (self.skipped_frames += 1) >= frameskip
+      self.frame = (frame + 1) % 4
+      self.skipped_frames = 0
+    end
   end
 
   def footsteps
@@ -209,9 +218,9 @@ class Player
   end
 
   def collision?(next_x, next_y)
-    next_tile1, next_tile2 = $gtk.args.state.map.tiles_at(next_x, next_y)
+    next_tiles1, next_tiles2 = $gtk.args.state.map.tiles_in(next_x - source_w.half, next_y + source_h.half, next_x + source_w.half, next_y - source_h.half)
 
-    !walkable_terrains.include?(next_tile1.properties[:terrain]) || next_tile2 && next_tile2.properties.collide?
+    next_tiles1.any? { |t| !walkable_terrains.include?(t.properties[:terrain]) } || next_tiles2.any? { |t| t.properties.collide? }
   end
 
   def nearby_interactables
