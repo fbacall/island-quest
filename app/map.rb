@@ -15,7 +15,23 @@ class Map
     @objects = []
     map.object_groups.each do |group|
       group.objects.each do |object|
-        @objects << TileEntity.new(object.attributes.gid.to_i, x: object.x.to_i, y: @h - object.y.to_i)
+        pos = {
+          x: object.x.to_i + @tile_w.half,
+          y: (@h - object.y.to_i) + @tile_h.half,
+          z_index: group.properties.zindex
+        }
+        case object.tile.attributes.type
+        when 'Item'
+          @objects << ItemEntity.new(object.attributes.name,
+                                     object.attributes.gid.to_i,
+                                     pos)
+        when 'Interactable'
+          @objects << ScriptEntity.new(object.attributes.name,
+                                       object.attributes.gid.to_i,
+                                       pos)
+        else
+          @objects << TileEntity.new(object.attributes.gid.to_i, pos)
+        end
       end
     end
   end
@@ -35,7 +51,7 @@ class Map
   def tiles_in_layer(x1, y1, x2, y2, layer)
     tile_coords_in(x1, y1, x2, y2).map do |x, y|
       map.layers.at(layer).tile_at(x, y)
-    end
+    end.compact
   end
 
   def tiles_in(x1, y1, x2, y2)

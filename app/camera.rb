@@ -50,8 +50,8 @@ class Camera
 
   def screen_coords(entity)
     {
-      x: (entity.left_edge - adjusted_x) * scale + $gtk.args.grid.center_x,
-      y: (entity.top_edge - adjusted_y) * scale + $gtk.args.grid.center_y,
+      x: (entity.left - adjusted_x) * scale + $gtk.args.grid.center_x,
+      y: (entity.top - adjusted_y) * scale + $gtk.args.grid.center_y,
       w: entity.w * scale,
       h: entity.h * scale
     }

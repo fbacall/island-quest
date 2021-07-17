@@ -25,24 +25,36 @@ class PlayState < State
     push_state(PausedState.new) if args.inputs.keyboard.key_down.escape
     push_state(DialogueState.new('intro', 'player' => args.state.player)) if args.inputs.keyboard.key_down.i
     push_state(ScriptState.new('test')) if args.inputs.keyboard.key_down.x
-    if args.state.player.interactables&.any? && args.inputs.keyboard.key_down.enter || args.inputs.keyboard.key_down.space
-      puts args.state.player.interactables.inspect
+    if args.state.interactable&.interactable? &&  args.inputs.keyboard.key_down.enter || args.inputs.keyboard.key_down.space
+      if args.state.interactable.respond_to?(:interact)
+        args.state.interactable.interact
+      else
+        puts args.state.interactable.inspect
+      end
     end
   end
 
   def update(args)
+    args.state.interactable = nil
     args.state.player.tick
+    args.state.interactable = args.state.map.objects.detect do |obj|
+      obj.intersect_rect?(args.state.player)
+    end
   end
 
   def draw(args)
     draw_debug(args) if args.state.debug
 
-    args.outputs.sprites << (args.state.map.layers + [args.state.player]).sort_by(&:z_index).map(&:draw)
-    args.outputs.sprites << args.state.map.objects.map(&:draw)
+    args.outputs.sprites << (args.state.map.layers + args.state.map.objects + [args.state.player]).sort_by(&:z_index).map(&:draw).compact
 
-    if args.state.player.interactables&.any?
-      args.outputs.sprites << TileEntity.new(2, x: args.state.player.x, y: args.state.player.y + 16).draw
+    if args.state.interactable&.interactable?
+      args.outputs.sprites << TileEntity.new(242, x: args.state.player.x, y: args.state.player.y + 16, z_index: 500).draw
     end
+
+    args.state.player.inventory.each_with_index do |item, i|
+      args.outputs.sprites << item.inventory_draw
+    end
+
   end
 
   # Stop footstep sounds

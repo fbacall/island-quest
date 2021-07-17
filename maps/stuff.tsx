@@ -473,7 +473,7 @@
    <property name="collide" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="87">
+ <tile id="87" type="Interactable">
   <properties>
    <property name="collide" type="bool" value="false"/>
   </properties>
@@ -1266,6 +1266,7 @@
  <tile id="237">
   <properties>
    <property name="collide" type="bool" value="false"/>
+   <property name="terrain" value="sand"/>
   </properties>
  </tile>
  <tile id="238">

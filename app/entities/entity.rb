@@ -1,4 +1,6 @@
 class Entity
+  include GTK::Geometry
+
   attr_accessor :x, :y, # World position
                 :w, :h, # Width/height
                 :z_index
@@ -14,19 +16,27 @@ class Entity
     $camera.screen_coords(self)
   end
 
-  def top_edge
+  def top
     y - h.half
   end
 
-  def bottom_edge
+  def bottom
     y + h.half
   end
 
-  def left_edge
+  def left
     x - w.half
   end
 
-  def right_edge
+  def right
     x + w.half
+  end
+
+  def x1
+    x
+  end
+
+  def y1
+    y
   end
 end

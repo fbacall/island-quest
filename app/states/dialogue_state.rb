@@ -1,7 +1,8 @@
 class DialogueState < State
-  def initialize(script, participants = {})
+  def initialize(script, participants = {}, variables = {})
     @script = $gtk.parse_json($gtk.read_file("dialogue/#{script}.json"))
     @participants = participants
+    @variables = variables
   end
 
   def init
@@ -73,6 +74,7 @@ class DialogueState < State
       pop_state
     else
       @segment = @script[@segment_index]
+      @segment['speech'] = substitute(@segment['speech'])
       activate(@segment['pos'])
       set_actor(@segment['actor'], @segment['pos'])
       next_char
@@ -186,5 +188,18 @@ class DialogueState < State
         end
       end
     end
+  end
+
+  private
+
+  def substitute(speech)
+    str = ''
+    parts = speech.split('%{')
+    str << parts.first
+    parts[1..-1].each do |part|
+      var, text = part.split('}')
+      str << @variables[var.to_sym] + text
+    end
+    str
   end
 end

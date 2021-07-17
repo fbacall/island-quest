@@ -1,12 +1,13 @@
 class ScriptState < State
-  def initialize(script)
+  def initialize(script, entity = nil)
     @script = $gtk.read_file("scripts/#{script}.rb")
+    @entity = entity
   end
 
   def init
     super
     @fiber = Fiber.new do
-      ScriptContext.new(@script).run
+      ScriptContext.new(@script, @entity).run
     end
   end
 

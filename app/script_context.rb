@@ -1,10 +1,19 @@
 class ScriptContext
-  def initialize(code)
+  def initialize(code, entity)
     @code = code
+    @entity = entity
   end
 
   def run
     instance_eval(@code)
+  end
+
+  def entity
+    @entity
+  end
+
+  def done!
+    @entity.done = true
   end
 
   def move(actor, x, y)

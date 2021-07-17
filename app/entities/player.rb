@@ -5,7 +5,7 @@ class Player < Entity
                 :prev_speed, # Last frame speed (for impulse calc)
                 :x_vel, :y_vel,
                 :x_accel, :y_accel,
-                :max_speed, :max_accel, :friction, :dir, :skipped_frames, :frame
+                :max_speed, :max_accel, :friction, :dir, :skipped_frames, :frame, :inventory
 
   attr_reader :interactables
 
@@ -31,6 +31,7 @@ class Player < Entity
       paused: true,              # Set to true to pause the sound at the current playback position
       looping: true              # Set to true to loop the sound/music until you stop it
     }
+    @inventory = []
   end
 
   def speed
@@ -160,7 +161,11 @@ class Player < Entity
       x + w.third,
       y - h.third)
 
-    next_tiles1.any? { |t| !walkable_terrains.include?(t.properties[:terrain]) } || next_tiles2.any? { |t| t.properties.collide? }
+    next_tiles1.any? { |t| !walkable_terrains.include?(t.properties[:terrain]) } ||
+      next_tiles2.any? { |t| t.properties.collide? } ||
+      $gtk.args.state.map.objects.any? do |obj|
+        obj.collide? && self.intersect_rect?(obj, 1.5)
+      end
   end
 
   def nearby_interactables
@@ -171,7 +176,7 @@ class Player < Entity
   end
 
   def walkable_terrains
-    t = ['sand', 'grass', 'long_grass']
+    ['sand', 'grass', 'long_grass']
   end
 
   def debug_info
