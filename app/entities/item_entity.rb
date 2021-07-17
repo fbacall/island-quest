@@ -17,17 +17,11 @@ class ItemEntity < TileEntity
     !@collected
   end
 
-  def tile_draw
-    nil
-  end
-
-  alias_method :tile_draw, :draw
-
   def draw
-    tile_draw unless @collected
+    super unless @collected
   end
 
   def inventory_draw(i)
-    tile_draw.merge(x: args.grid.w - 32 * $camera.scale, y: (32 + i * 24) * $camera.scale)
+    {}#tile_draw.merge(x: args.grid.w - 32 * $camera.scale, y: (32 + i * 24) * $camera.scale)
   end
 end
