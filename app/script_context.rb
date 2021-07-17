@@ -35,9 +35,25 @@ class ScriptContext
       })
   end
 
-  def wait(ticks)
+  def wait(ticks = 16)
     end_tick = $gtk.args.tick_count + ticks
     action(-> () {}, -> () { $gtk.args.tick_count >= end_tick })
+  end
+
+  def fade_out(ticks = 16)
+    t = ticks
+    action(-> () {
+      set_fade(255 * (1 - (t / ticks)))
+      t -= 1
+    }, -> () { t < 0 })
+  end
+
+  def fade_in(ticks = 16)
+    t = ticks
+    action(-> () {
+      set_fade(255 * (t / ticks))
+      t -= 1
+    }, -> () { t < 0 })
   end
 
   def start_dialogue(name)
@@ -45,7 +61,15 @@ class ScriptContext
     Fiber.yield
   end
 
+  def get_entity(name)
+    map.objects.detect { |o| o.name == name }
+  end
+
   private
+
+  def set_fade(a)
+    $gtk.args.state.fade = a
+  end
 
   def action(tick_proc, end_condition)
     until end_condition.call

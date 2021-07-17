@@ -20,7 +20,7 @@ class Map
           y: (@h - object.y.to_i) + @tile_h.half,
           z_index: group.properties.zindex
         }
-        case object.tile.attributes.type
+        case object.attributes.type || object.tile.attributes.type
         when 'Item'
           @objects << ItemEntity.new(object.attributes.name,
                                      object.attributes.gid.to_i,

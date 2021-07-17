@@ -7,6 +7,7 @@ class ScriptState < State
     @entity = entity
     @done = false
     @transition_length = TRANSITION_TICKS
+    $gtk.args.state.fade = 0
   end
 
   def init
@@ -45,6 +46,7 @@ class ScriptState < State
     letterbox_height = BAR_HEIGHT * ((@done ? 0 : 1) - (@transition_length / TRANSITION_TICKS)).abs
     args.outputs.primitives << { x: 0, y: 0, w: args.grid.w, h: letterbox_height, r: 0, g: 0, b: 0 }.solid
     args.outputs.primitives << { x: 0, y: args.grid.h - letterbox_height, w: args.grid.w, h: letterbox_height, r: 0, g: 0, b: 0 }.solid
+    args.outputs.primitives << { x: 0, y: 0, w: args.grid.w, h: args.grid.h, r: 0, g: 0, b: 0, a: args.state.fade }.solid
     previous_state&.draw(args)
   end
 
