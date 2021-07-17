@@ -1,4 +1,6 @@
 class ScriptContext
+  TIMEOUT = 600
+
   def initialize(code, entity)
     @code = code
     @entity = entity
@@ -72,9 +74,15 @@ class ScriptContext
   end
 
   def action(tick_proc, end_condition)
+    ttl = TIMEOUT
     until end_condition.call
+      ttl -= 1
       tick_proc.call
       Fiber.yield
+      if ttl <= 0
+        $gtk.notify! 'Script action timeout!'
+        break
+      end
     end
   end
 end
