@@ -1,12 +1,14 @@
 class DialogueState < State
-  def initialize(script, participants = {}, variables = {})
-    @script = $gtk.parse_json($gtk.read_file("dialogue/#{script}.json"))
+  def initialize(name, participants = {}, variables = {})
+    @name = name
     @participants = participants
     @variables = variables
   end
 
   def init
     super
+    json = $gtk.read_file(dialogue_path)
+    @dialogue = $gtk.parse_json(json)
     @tick = $gtk.args.tick_count
     @sections = { top: nil, middle: nil, bottom: nil }
     reset
@@ -70,10 +72,10 @@ class DialogueState < State
 
   def next_segment
     @segment_index += 1
-    if @segment_index >= @script.length
+    if @segment_index >= @dialogue.length
       pop_state
     else
-      @segment = @script[@segment_index]
+      @segment = @dialogue[@segment_index]
       @segment['speech'] = substitute(@segment['speech'])
       activate(@segment['pos'])
       set_actor(@segment['actor'], @segment['pos'])
@@ -149,7 +151,7 @@ class DialogueState < State
           y: avatar_y,
           a: data[:active] ? 255 : 128,
           flip_horizontally: flip
-        }.merge(data[:sprite].dialogue_avatar)
+        }.merge!(data[:sprite].dialogue_avatar)
       end
 
       if data[:text] && data[:text].length > 0
@@ -201,5 +203,9 @@ class DialogueState < State
       str << @variables[var.to_sym] + text
     end
     str
+  end
+
+  def dialogue_path
+    "dialogue/#{@name}.json"
   end
 end

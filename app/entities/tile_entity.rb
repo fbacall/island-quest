@@ -24,7 +24,7 @@ class TileEntity < Entity
   end
 
   def draw
-    super.merge(
+    super.merge!(
       path: tile.path,
       tile_x: tile.tile_x.to_i,
       tile_y: tile.tile_y.to_i,
@@ -34,10 +34,10 @@ class TileEntity < Entity
   end
 
   def inventory_draw(slot)
-    draw.merge(w: w * INVENTORY_SCALE,
-               h: h * INVENTORY_SCALE,
-               x: $gtk.args.grid.w - 20 * INVENTORY_SCALE,
-               y: $gtk.args.grid.h - ((20 + slot * 20) * INVENTORY_SCALE),
-               a: 255)
+    draw.merge!(w: w * INVENTORY_SCALE,
+                h: h * INVENTORY_SCALE,
+                x: $gtk.args.grid.w - 20 * INVENTORY_SCALE,
+                y: $gtk.args.grid.h - ((20 + slot * 20) * INVENTORY_SCALE),
+                a: 255)
   end
 end

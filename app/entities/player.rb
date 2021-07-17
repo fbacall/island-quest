@@ -208,7 +208,7 @@ class Player < Entity
                when 'right'
                  48
                end
-    super.merge({
+    super.merge!({
                   source_x: source_x,
                   source_y: source_y,
                   source_w: 16,

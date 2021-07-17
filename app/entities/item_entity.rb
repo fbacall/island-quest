@@ -18,6 +18,6 @@ class ItemEntity < TileEntity
   end
 
   def draw
-    super.merge(a: @collected ? 0 : 255)
+    super.merge!(a: @collected ? 0 : 255)
   end
 end

@@ -13,6 +13,6 @@ class MapLayer < Entity
   end
 
   def draw
-    super.merge(path: target_key)
+    super.merge!(path: target_key)
   end
 end
