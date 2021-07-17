@@ -1,6 +1,4 @@
-class MapLayer
-  attr_sprite
-
+class MapLayer < Entity
   attr_accessor :z_index, :target, :target_key, :map
 
   def initialize(map, tiled_layer)
@@ -10,35 +8,11 @@ class MapLayer
     @target.width = map.w
     @target.height = map.h
     @target.sprites << tiled_layer.sprites
-    super
     @z_index = tiled_layer.properties.zindex
+    super(x: map.w.half, y: map.h.half, w: map.w, h: map.h)
   end
 
-  def x_pos
-    map.w.half
-  end
-
-  def y_pos
-    map.h.half
-  end
-
-  def x
-    $camera.draw_x(self)
-  end
-
-  def y
-    $camera.draw_y(self)
-  end
-
-  def w
-    map.w * $camera.scale
-  end
-
-  def h
-    map.h * $camera.scale
-  end
-
-  def path
-    target_key
+  def draw
+    super.merge(path: target_key)
   end
 end

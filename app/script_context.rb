@@ -10,12 +10,12 @@ class ScriptContext
   def move(actor, x, y)
     action(
       -> () {
-        actor.x_pos <= x ? actor.x_accel = 1 : actor.x_accel = -1
-        actor.y_pos <= y ? actor.y_accel = 1 : actor.y_accel = -1
+        actor.x <= x ? actor.x_accel = 1 : actor.x_accel = -1
+        actor.y <= y ? actor.y_accel = 1 : actor.y_accel = -1
         actor.tick
       },
       -> () {
-        (actor.x_pos - x).abs < 5 && (actor.y_pos - y).abs < 5
+        (actor.x - x).abs < 5 && (actor.y - y).abs < 5
       })
   end
 

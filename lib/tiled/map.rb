@@ -55,10 +55,14 @@ module Tiled
       @properties ||= Properties.new(self)
     end
 
-    def find_tile(gid)
+    def find_tile(gid, debug = false)
       return if gid.zero?
 
       @tiles_cache ||= {}
+      if debug
+      puts gid
+      puts @tiles_cache[gid].inspect
+      end
       @tiles_cache[gid] ||= begin
         tileset = tilesets.detect do |tileset|
           tileset.firstgid <= gid && tileset.firstgid + tileset.attributes.tilecount.to_i - 1 >= gid

@@ -13,11 +13,11 @@ class Camera
   end
 
   def target_x
-    @target ? @target.x_pos : @x
+    @target ? @target.x : @x
   end
 
   def target_y
-    @target ? @target.y_pos : @y
+    @target ? @target.y : @y
   end
 
   def adjusted_x
@@ -48,11 +48,12 @@ class Camera
     $gtk.args.grid.center_y / scale
   end
 
-  def draw_x(sprite)
-    (sprite.x_pos - adjusted_x) * scale + $gtk.args.grid.center_x - sprite.w.half
-  end
-
-  def draw_y(sprite)
-    (sprite.y_pos - adjusted_y) * scale + $gtk.args.grid.center_y - sprite.h.half
+  def screen_coords(entity)
+    {
+      x: (entity.left_edge - adjusted_x) * scale + $gtk.args.grid.center_x,
+      y: (entity.top_edge - adjusted_y) * scale + $gtk.args.grid.center_y,
+      w: entity.w * scale,
+      h: entity.h * scale
+    }
   end
 end

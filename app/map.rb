@@ -1,5 +1,5 @@
 class Map
-  attr_accessor :map, :attributes, :w, :h, :tile_h, :tile_w, :w_tiles, :h_tiles
+  attr_accessor :map, :attributes, :w, :h, :tile_h, :tile_w, :w_tiles, :h_tiles, :objects
 
   def initialize(path)
     @map = Tiled::Map.new(path)
@@ -12,7 +12,12 @@ class Map
     @w = @tile_w * @w_tiles
     @h = @tile_h * @h_tiles
     @layers = map.layers.map { |layer| MapLayer.new(self, layer) }
-    @layers += map.object_groups.map { |oj| MapLayer.new(self, oj) }
+    @objects = []
+    map.object_groups.each do |group|
+      group.objects.each do |object|
+        @objects << TileEntity.new(object.attributes.gid.to_i, x: object.x.to_i, y: @h - object.y.to_i)
+      end
+    end
   end
 
   def layers

@@ -37,20 +37,11 @@ class PlayState < State
   def draw(args)
     draw_debug(args) if args.state.debug
 
-    args.outputs.sprites << (args.state.map.layers + [args.state.player]).sort_by(&:z_index)
+    args.outputs.sprites << (args.state.map.layers + [args.state.player]).sort_by(&:z_index).map(&:draw)
+    args.outputs.sprites << args.state.map.objects.map(&:draw)
 
     if args.state.player.interactables&.any?
-      args.outputs.sprites << {
-        path: 'gfx/tileset.png',
-        x: args.state.player.x,
-        y: args.state.player.y + 16 * $camera.scale,
-        w: 16 * $camera.scale,
-        h: 16 * $camera.scale,
-        source_x: 16,
-        source_y: 0,
-        source_w: 16,
-        source_h: 16,
-      }
+      args.outputs.sprites << TileEntity.new(2, x: args.state.player.x, y: args.state.player.y + 16).draw
     end
   end
 
@@ -63,8 +54,8 @@ class PlayState < State
   private
 
   def draw_debug(args)
-    tile_x, tile_y = args.state.map.tile_coords(args.state.player.x_pos, args.state.player.y_pos)
-    tile1, tile2 = args.state.map.tiles_at(args.state.player.x_pos, args.state.player.y_pos)
+    tile_x, tile_y = args.state.map.tile_coords(args.state.player.x, args.state.player.y)
+    tile1, tile2 = args.state.map.tiles_at(args.state.player.x, args.state.player.y)
     args.outputs.labels << [10, 70, "Tile: #{tile_x} #{tile_y} [Layer 1: #{tile1.id}] [Layer 2: #{tile2.id}] [T: #{tile1.properties[:terrain]}", -1]
     args.outputs.labels << [10, 30, args.state.player.debug_info, -1]
     args.outputs.labels << [args.grid.w - 80, args.grid.h - 10, 'FPS: ' + $gtk.current_framerate.round(1).to_s, -1]

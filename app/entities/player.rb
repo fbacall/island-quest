@@ -1,35 +1,21 @@
-class Player
-  attr_sprite
-
+class Player < Entity
   DIRECTION_MATRIX = [-1, 0, 1].product([-1, 0, 1])
 
-  attr_accessor :x_pos, :y_pos, # World position
-                :prev_x, :prev_y, # Last frame position
+  attr_accessor :prev_x, :prev_y, # Last frame position
                 :prev_speed, # Last frame speed (for impulse calc)
                 :x_vel, :y_vel,
                 :x_accel, :y_accel,
-                :max_speed, :max_accel, :friction, :dir, :skipped_frames, :frame, :z_index
+                :max_speed, :max_accel, :friction, :dir, :skipped_frames, :frame
 
   attr_reader :interactables
 
   def initialize(x, y)
-    super
-    @w = 0
-    @h = 0
-    @x_pos = x
-    @y_pos = y
+    super(x: x, y: y, w: 16, h: 16)
     @x_vel = 0
     @y_vel = 0
     @x_accel = 0
     @y_accel = 0
     @path = 'gfx/man.png'
-    @a = 255
-    @r = 255
-    @g = 255
-    @b = 255
-    @angle = 0
-    @source_w = 16
-    @source_h = 16
     @max_speed = 2
     @max_accel = 0.4
     @friction = 0.25
@@ -47,22 +33,6 @@ class Player
     }
   end
 
-  def x
-    $camera.draw_x(self)
-  end
-
-  def y
-    $camera.draw_y(self)
-  end
-
-  def w
-    @source_w * $camera.scale
-  end
-
-  def h
-    @source_h * $camera.scale
-  end
-
   def speed
     mag(x_vel, y_vel)
   end
@@ -75,30 +45,9 @@ class Player
     (max_speed * 1.5 - speed) * 3
   end
 
-  def source_x
-    if speed > 0.1
-      @frame * 16
-    else
-      16
-    end
-  end
-
-  def source_y
-    case dir
-    when 'up'
-      0
-    when 'down'
-      16
-    when 'left'
-      32
-    when 'right'
-      48
-    end
-  end
-
   def tick
-    @prev_x = x_pos
-    @prev_y = y_pos
+    @prev_x = x
+    @prev_y = y
     @prev_speed = speed
     accelerate
     apply_friction
@@ -135,23 +84,23 @@ class Player
   end
 
   def move
-    self.x_pos = (x_pos + x_vel).clamp(w.half, $gtk.args.state.map.w - w.half)
-    self.y_pos = (y_pos + y_vel).clamp(h.half, $gtk.args.state.map.h - h.half)
+    self.x = (x + x_vel).clamp(w.half, $gtk.args.state.map.w - w.half)
+    self.y = (y + y_vel).clamp(h.half, $gtk.args.state.map.h - h.half)
 
     true
   end
 
   def collide
-    if collision?(x_pos, prev_y)
+    if collision?(x, prev_y)
       self.x_vel = 0
       self.x_accel = 0
-      self.x_pos = prev_x
+      self.x = prev_x
     end
 
-    if collision?(prev_x, y_pos)
+    if collision?(prev_x, y)
       self.y_vel = 0
       self.y_accel = 0
-      self.y_pos = prev_y
+      self.y = prev_y
     end
 
     # thud!
@@ -201,24 +150,22 @@ class Player
     end
 
     # Shift pitch based on tile, sand is higher pitch than long grass.
-    #$gtk.args.audio[:footstep][:pitch] = 0.5 + ($gtk.args.state.map.tile_at(x_pos, y_pos, 0).id.to_f / 3)
+    #$gtk.args.audio[:footstep][:pitch] = 0.5 + ($gtk.args.state.map.tile_at(x, y, 0).id.to_f / 3)
   end
 
   def collision?(x, y)
     next_tiles1, next_tiles2 = $gtk.args.state.map.tiles_in(
-      x - source_w.third,
-      y + source_h.third,
-      x + source_w.third,
-      y - source_h.third)
+      x - w.third,
+      y + h.third,
+      x + w.third,
+      y - h.third)
 
     next_tiles1.any? { |t| !walkable_terrains.include?(t.properties[:terrain]) } || next_tiles2.any? { |t| t.properties.collide? }
   end
 
   def nearby_interactables
     dist = 10
-    surrounding_tiles = DIRECTION_MATRIX.map do |x, y|
-      $gtk.args.state.map.tile_at(x_pos + (x * dist), y_pos + (y * dist), 1)
-    end
+    surrounding_tiles = $gtk.args.state.map.tiles_in_layer(x - dist, y - dist, x + dist, y + dist, 1)
 
     surrounding_tiles.select { |tile| tile && (tile.type == 'Item' || tile.type == 'Interactable') }
   end
@@ -228,11 +175,38 @@ class Player
   end
 
   def debug_info
-    "Player: #{x_pos.round(1)}, #{y_pos.round(1)}
+    "Player: #{x.round(1)}, #{y.round(1)}
  [A: #{x_accel.round(1)}, #{y_accel.round(1)}]
  [V: #{x_vel.round(1)}, #{y_vel.round(1)}]
- (Draw: #{x}, #{y})
- (Dir: #{dir} #{source_x} #{source_y} #{frame})"
+ (Pos: #{x}, #{y})
+ (Anim: #{dir} #{frame})"
+  end
+
+  def draw
+    source_x =
+      if speed > 0.1
+        @frame * 16
+      else
+        16
+      end
+
+    source_y = case dir
+               when 'up'
+                 0
+               when 'down'
+                 16
+               when 'left'
+                 32
+               when 'right'
+                 48
+               end
+    super.merge({
+                  source_x: source_x,
+                  source_y: source_y,
+                  source_w: 16,
+                  source_h: 16,
+                  path: @path
+                })
   end
 
   def dialogue_avatar
