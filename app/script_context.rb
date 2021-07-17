@@ -5,7 +5,14 @@ class ScriptContext
   end
 
   def run
-    instance_eval(@code)
+    begin
+      instance_eval(@code)
+    rescue Exception => e
+      $gtk.notify! "Script error! :("
+      puts e.class.name
+      puts e.message
+      puts e.backtrace.join("\n")
+    end
   end
 
   def entity
