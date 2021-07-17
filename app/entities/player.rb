@@ -219,7 +219,7 @@ class Player < Entity
 
   def dialogue_avatar
     {
-      path: path,
+      path: @path,
       w: 32 * $gtk.args.state.avatar_scale,
       h: 20 * $gtk.args.state.avatar_scale,
       source_x: 16,
