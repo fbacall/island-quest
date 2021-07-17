@@ -92,13 +92,16 @@ class Player < Entity
   end
 
   def collide
-    if collision?(x, prev_y)
+    x_col = collision?(x, prev_y)
+    y_col = collision?(prev_x, y)
+
+    if x_col
       self.x_vel = 0
       self.x_accel = 0
       self.x = prev_x
     end
 
-    if collision?(prev_x, y)
+    if y_col
       self.y_vel = 0
       self.y_accel = 0
       self.y = prev_y
