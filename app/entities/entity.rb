@@ -13,7 +13,7 @@ class Entity
   end
 
   def draw
-    $camera.screen_coords(self)
+    camera.screen_coords(self)
   end
 
   def top

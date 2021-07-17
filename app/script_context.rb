@@ -34,12 +34,8 @@ class ScriptContext
   end
 
   def start_dialogue(name)
-    $state_manager.push_state(DialogueState.new(name, 'player' => $gtk.args.state.player))
+    state_manager.push_state(DialogueState.new(name, 'player' => player))
     Fiber.yield
-  end
-
-  def player
-    $gtk.args.state.player
   end
 
   private

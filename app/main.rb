@@ -18,14 +18,38 @@ require 'app/states/paused_state.rb'
 require 'app/states/intro_state.rb'
 
 def tick(args)
+  args.state.debug = false if args.state.debug.nil? # Can't use `||=` because the value can be `false`
   args.state.dputs_count = 0
-  $state_manager ||= StateManager.new(IntroState.new)
+  args.state.avatar_scale = 8
 
-  $state_manager.current_state.handle_input(args)
-  $state_manager.current_state.update(args)
-  $state_manager.current_state.draw(args)
+  args.state._map ||= Map.new('maps/world.tmx')
+  args.state._player ||= Player.new(map.w.half, map.h.half)
+  args.state._camera ||= Camera.new(map.w.half, map.h.half).tap do |c|
+    c.scale = 4
+    c.track(player )
+  end
+  args.state._state_manager ||= StateManager.new(IntroState.new)
+
+  state_manager.current_state.handle_input(args)
+  state_manager.current_state.update(args)
+  state_manager.current_state.draw(args)
 end
 
+def state_manager
+  $gtk.args.state._state_manager
+end
+
+def camera
+  $gtk.args.state._camera
+end
+
+def player
+  $gtk.args.state._player
+end
+
+def map
+  $gtk.args.state._map
+end
 
 def dputs(*str)
   $gtk.args.state.dputs_count += 1

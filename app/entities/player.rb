@@ -85,8 +85,8 @@ class Player < Entity
   end
 
   def move
-    self.x = (x + x_vel).clamp(w.half, $gtk.args.state.map.w - w.half)
-    self.y = (y + y_vel).clamp(h.half, $gtk.args.state.map.h - h.half)
+    self.x = (x + x_vel).clamp(w.half, map.w - w.half)
+    self.y = (y + y_vel).clamp(h.half, map.h - h.half)
 
     true
   end
@@ -151,11 +151,11 @@ class Player < Entity
     end
 
     # Shift pitch based on tile, sand is higher pitch than long grass.
-    #$gtk.args.audio[:footstep][:pitch] = 0.5 + ($gtk.args.state.map.tile_at(x, y, 0).id.to_f / 3)
+    #$gtk.args.audio[:footstep][:pitch] = 0.5 + (map.tile_at(x, y, 0).id.to_f / 3)
   end
 
   def collision?(x, y)
-    next_tiles1, next_tiles2 = $gtk.args.state.map.tiles_in(
+    next_tiles1, next_tiles2 = map.tiles_in(
       x - w.third,
       y + h.third,
       x + w.third,
@@ -163,14 +163,14 @@ class Player < Entity
 
     next_tiles1.any? { |t| !walkable_terrains.include?(t.properties[:terrain]) } ||
       next_tiles2.any? { |t| t.properties.collide? } ||
-      $gtk.args.state.map.objects.any? do |obj|
+      map.objects.any? do |obj|
         obj.collide? && self.intersect_rect?(obj, 1.5)
       end
   end
 
   def nearby_interactables
     dist = 10
-    surrounding_tiles = $gtk.args.state.map.tiles_in_layer(x - dist, y - dist, x + dist, y + dist, 1)
+    surrounding_tiles = map.tiles_in_layer(x - dist, y - dist, x + dist, y + dist, 1)
 
     surrounding_tiles.select { |tile| tile && (tile.type == 'Item' || tile.type == 'Interactable') }
   end

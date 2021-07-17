@@ -8,8 +8,8 @@ class ItemEntity < TileEntity
   end
 
   def interact
-    $gtk.args.state.player.inventory << self unless $gtk.args.state.player.inventory.include?(self)
-    $state_manager.push_state(DialogueState.new('item', {}, { item: name }))
+    player.inventory << self unless player.inventory.include?(self)
+    state_manager.push_state(DialogueState.new('item', {}, { item: name }))
     @collected = true
   end
 

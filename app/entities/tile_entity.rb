@@ -20,7 +20,7 @@ class TileEntity < Entity
   end
 
   def tile
-    $gtk.args.state.map.map.find_tile(@tile_id)
+    map.map.find_tile(@tile_id)
   end
 
   def draw

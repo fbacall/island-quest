@@ -23,14 +23,14 @@ class State
   end
 
   def push_state(state)
-    $state_manager.push_state(state)
+    state_manager.push_state(state)
   end
 
   def pop_state
-    $state_manager.pop_state
+    state_manager.pop_state
   end
 
   def set_state(state)
-    $state_manager.set_state(state)
+    state_manager.set_state(state)
   end
 end

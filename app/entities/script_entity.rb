@@ -8,7 +8,7 @@ class ScriptEntity < TileEntity
   end
 
   def interact
-    $state_manager.push_state(ScriptState.new(script, self))
+    state_manager.push_state(ScriptState.new(script, self))
   end
 
   def interactable?

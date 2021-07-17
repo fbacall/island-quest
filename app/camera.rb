@@ -23,8 +23,8 @@ class Camera
   def adjusted_x
     if target_x < center_x
       center_x
-    elsif target_x > ($gtk.args.state.map.w - center_x)
-      ($gtk.args.state.map.w - center_x)
+    elsif target_x > (map.w - center_x)
+      (map.w - center_x)
     else
       target_x
     end
@@ -33,8 +33,8 @@ class Camera
   def adjusted_y
     if target_y < center_y
       center_y
-    elsif target_y > ($gtk.args.state.map.h - center_y)
-      ($gtk.args.state.map.h - center_y)
+    elsif target_y > (map.h - center_y)
+      (map.h - center_y)
     else
       target_y
     end
