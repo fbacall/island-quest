@@ -5,7 +5,7 @@ class Player < Entity
                 :prev_speed, # Last frame speed (for impulse calc)
                 :x_vel, :y_vel,
                 :x_accel, :y_accel,
-                :max_speed, :max_accel, :friction, :dir, :skipped_frames, :frame, :inventory
+                :max_speed, :max_accel, :friction, :dir, :skipped_frames, :frame, :inventory, :noclip
 
   attr_reader :interactables
 
@@ -32,6 +32,7 @@ class Player < Entity
       looping: true              # Set to true to loop the sound/music until you stop it
     }
     @inventory = []
+    @noclip = false
   end
 
   def speed
@@ -92,6 +93,7 @@ class Player < Entity
   end
 
   def collide
+    return if noclip
     x_col = collision?(x, prev_y)
     y_col = collision?(prev_x, y)
 

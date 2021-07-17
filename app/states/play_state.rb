@@ -16,6 +16,7 @@ class PlayState < State
     player.y_accel = -1 if args.inputs.keyboard.key_held.s
     player.x_accel = 1 if args.inputs.keyboard.key_held.d
     args.state.debug = !args.state.debug if args.inputs.keyboard.key_down.one
+    player.noclip = !player.noclip if args.inputs.keyboard.key_down.two
     (camera.scale -= 1) if args.inputs.keyboard.key_down.open_square_brace && camera.scale > 1
     (camera.scale += 1) if args.inputs.keyboard.key_down.close_square_brace && camera.scale < 10
     push_state(PausedState.new) if args.inputs.keyboard.key_down.escape
