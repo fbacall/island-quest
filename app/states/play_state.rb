@@ -51,8 +51,10 @@ class PlayState < State
       args.outputs.sprites << TileEntity.new(242, x: args.state.player.x, y: args.state.player.y + 16, z_index: 500).draw
     end
 
+    bg = TileEntity.new(241)
     args.state.player.inventory.each_with_index do |item, i|
-      args.outputs.sprites << item.inventory_draw
+      args.outputs.sprites << bg.inventory_draw(i)
+      args.outputs.sprites << item.inventory_draw(i)
     end
 
   end

@@ -18,10 +18,6 @@ class ItemEntity < TileEntity
   end
 
   def draw
-    super unless @collected
-  end
-
-  def inventory_draw(i)
-    {}#tile_draw.merge(x: args.grid.w - 32 * $camera.scale, y: (32 + i * 24) * $camera.scale)
+    super.merge(a: @collected ? 0 : 255)
   end
 end
