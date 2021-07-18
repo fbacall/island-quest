@@ -220,10 +220,11 @@ class Player < Entity
   end
 
   def dialogue_avatar
+    avatar_scale = 20
     {
       path: @path,
-      w: 20 * $gtk.args.state.avatar_scale,
-      h: 20 * $gtk.args.state.avatar_scale,
+      w: 20 * avatar_scale,
+      h: 20 * avatar_scale,
       source_x: 19,
       source_y: 54,
       source_w: 10,

@@ -58,10 +58,10 @@ class MenuState < State
       char_spacing = 40
       offset_x = args.grid.center_x - (@title.length * char_spacing) / 2
       @title.chars.each_with_index do |char, i|
-        p = Math.sin((args.tick_count + i * 3)/ 32) * 30
+        p = Math.sin((args.tick_count + i * 8)/ 32) * 30
         args.outputs.labels << {
           x: offset_x + (char_spacing * i),
-          y: 680 + p,
+          y: 660 + p,
           text: char,
           size_enum: 40,
           alignment_enum: 0,

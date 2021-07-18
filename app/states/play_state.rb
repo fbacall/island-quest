@@ -1,13 +1,4 @@
 class PlayState < State
-  def init
-    super
-    camera ||= Camera.new(800, 800).tap do |c|
-      c.scale = 4
-      c.track(player)
-    end
-    #push_state(DialogueState.new('intro', 'player' => player))
-  end
-
   def handle_input(args)
     player.x_accel = 0
     player.y_accel = 0

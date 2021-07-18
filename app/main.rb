@@ -19,21 +19,20 @@ require 'app/states/paused_state.rb'
 require 'app/states/intro_state.rb'
 
 def tick(args)
-  args.state.debug = false if args.state.debug.nil? # Can't use `||=` because the value can be `false`
-  args.state.dputs_count = 0
-  args.state.avatar_scale = 10
+  if args.tick_count <= 5
+    args.outputs.solids << { x: 0, y: 0, w: args.grid.w, h: args.grid.h, r: 0, g: 0, b: 0, a: 255 }
+    args.outputs.labels << { x: args.grid.center_x, y: args.grid.center_y + 20, text: 'Loading', size_enum: 20,
+                             alignment_enum: 1, r: 255, g: 255, b: 255, a: 255 }
+  else
+    args.state._map ||= Map.new('maps/world.tmx')
+    args.state._player ||= Player.new(map.w.half, map.h.half)
+    args.state._camera ||= Camera.new(scale: 4, target: player)
+    args.state._state_manager ||= StateManager.new(IntroState.new)
 
-  args.state._map ||= Map.new('maps/world.tmx')
-  args.state._player ||= Player.new(map.w.half, map.h.half)
-  args.state._camera ||= Camera.new(map.w.half, map.h.half).tap do |c|
-    c.scale = 4
-    c.track(player )
+    state_manager.current_state.handle_input(args)
+    state_manager.current_state.update(args)
+    state_manager.current_state.draw(args)
   end
-  args.state._state_manager ||= StateManager.new(IntroState.new)
-
-  state_manager.current_state.handle_input(args)
-  state_manager.current_state.update(args)
-  state_manager.current_state.draw(args)
 end
 
 def state_manager
@@ -53,6 +52,7 @@ def map
 end
 
 def dputs(*str)
+  $gtk.args.state.dputs_count ||= 0
   $gtk.args.state.dputs_count += 1
   str = str.join(', ')
   $gtk.args.outputs.labels << [400, 300 + ($gtk.args.state.dputs_count * 30), str, -1]

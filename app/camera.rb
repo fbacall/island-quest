@@ -2,10 +2,11 @@ class Camera
   attr_accessor :scale
   attr_reader :target
 
-  def initialize(x, y)
+  def initialize(x = 0, y = 0, scale: 1, target: nil)
     @x = x
     @y = y
-    @scale = 1
+    @scale = scale
+    @target = target
   end
 
   def track(target)
