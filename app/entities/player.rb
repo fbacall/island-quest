@@ -26,7 +26,7 @@ class Player < Entity
     $gtk.args.audio[:footstep] ||= {
       input: 'sounds/sand.wav',  # Filename
       x: 0.0, y: 0.0, z: 0.0,    # Relative position to the listener, x, y, z from -1.0 to 1.0
-      gain: 0.2,                 # Volume (0.0 to 1.0)
+      gain: 0.1,                 # Volume (0.0 to 1.0)
       pitch: 1.0,                # Pitch of the sound (1.0 = original pitch)
       paused: true,              # Set to true to pause the sound at the current playback position
       looping: true              # Set to true to loop the sound/music until you stop it
@@ -156,7 +156,7 @@ class Player < Entity
     end
 
     # Shift pitch based on tile, sand is higher pitch than long grass.
-    #$gtk.args.audio[:footstep][:pitch] = 0.5 + (map.tile_at(x, y, 0).id.to_f / 3)
+    $gtk.args.audio[:footstep][:pitch] = 0.7 + @frame.to_f / 5
   end
 
   def collision?(x, y)
@@ -222,11 +222,11 @@ class Player < Entity
   def dialogue_avatar
     {
       path: @path,
-      w: 32 * $gtk.args.state.avatar_scale,
+      w: 20 * $gtk.args.state.avatar_scale,
       h: 20 * $gtk.args.state.avatar_scale,
-      source_x: 16,
+      source_x: 19,
       source_y: 54,
-      source_w: 16,
+      source_w: 10,
       source_h: 10,
     }
   end

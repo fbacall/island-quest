@@ -1,9 +1,10 @@
 class ScriptContext
   TIMEOUT = 600
 
-  def initialize(code, entity)
+  def initialize(code, entity, state)
     @code = code
     @entity = entity
+    @state = state
   end
 
   def run
@@ -21,41 +22,55 @@ class ScriptContext
     @entity
   end
 
+  def state
+    @state
+  end
+
   def done!
-    @entity.done = true
+    entity.done = true
   end
 
   def move(actor, x, y)
-    action(
-      -> () {
-        actor.x <= x ? actor.x_accel = 1 : actor.x_accel = -1
-        actor.y <= y ? actor.y_accel = 1 : actor.y_accel = -1
-        actor.tick
-      },
-      -> () {
-        (actor.x - x).abs < 5 && (actor.y - y).abs < 5
-      })
+    ticks = 0
+    action -> () {
+      ticks += 1
+      if (actor.x - x).abs < 4 && (actor.y - y).abs < 4
+        actor.x_accel = 0
+        actor.y_accel = 0
+      else
+        actor.x_accel = x - actor.x
+        actor.y_accel = y - actor.y
+      end
+
+      actor.tick
+    },
+           -> () {
+             actor.speed == 0
+           }
   end
 
   def wait(ticks = 16)
     end_tick = $gtk.args.tick_count + ticks
-    action(-> () {}, -> () { $gtk.args.tick_count >= end_tick })
+    action -> () {},
+           -> () { $gtk.args.tick_count >= end_tick }
   end
 
   def fade_out(ticks = 16)
     t = ticks
-    action(-> () {
+    action -> () {
       set_fade(255 * (1 - (t / ticks)))
       t -= 1
-    }, -> () { t < 0 })
+    },
+           -> () { t < 0 }
   end
 
   def fade_in(ticks = 16)
     t = ticks
-    action(-> () {
+    action -> () {
       set_fade(255 * (t / ticks))
-      t -= 1
-    }, -> () { t < 0 })
+      t -= 1    },
+           -> () { t < 0 }
+
   end
 
   def start_dialogue(name)
@@ -67,6 +82,25 @@ class ScriptContext
     map.objects.detect { |o| o.name == name }
   end
 
+  def has_item?(name)
+    player.inventory.any? { |i| i.name == name }
+  end
+
+  def add_item(entity)
+    player.inventory << entity unless has_item?(entity.name)
+  end
+
+  def remove_item(name)
+    player.inventory.delete_if { |i| i.name == name }
+  end
+
+  def dialogue(position, speech, avatar = nil)
+    d = Dialogue.new(speech, avatar)
+    state.set_dialogue(position, d)
+    state_manager.push_state(DialogueState.new(d))
+    Fiber.yield
+  end
+
   private
 
   def set_fade(a)
@@ -75,7 +109,7 @@ class ScriptContext
 
   def action(tick_proc, end_condition)
     ttl = TIMEOUT
-    until end_condition.call
+    loop do
       ttl -= 1
       tick_proc.call
       Fiber.yield
@@ -83,6 +117,7 @@ class ScriptContext
         $gtk.notify! 'Script action timeout!'
         break
       end
+      break if end_condition.call
     end
   end
 end

@@ -1,5 +1,6 @@
 require 'lib/tiled/tiled.rb'
 require 'app/camera.rb'
+require 'app/dialogue.rb'
 require 'app/entities/entity.rb'
 require 'app/entities/tile_entity.rb'
 require 'app/entities/item_entity.rb'
@@ -20,7 +21,7 @@ require 'app/states/intro_state.rb'
 def tick(args)
   args.state.debug = false if args.state.debug.nil? # Can't use `||=` because the value can be `false`
   args.state.dputs_count = 0
-  args.state.avatar_scale = 8
+  args.state.avatar_scale = 10
 
   args.state._map ||= Map.new('maps/world.tmx')
   args.state._player ||= Player.new(map.w.half, map.h.half)

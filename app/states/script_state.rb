@@ -1,12 +1,15 @@
 class ScriptState < State
-  BAR_HEIGHT = 48
+  BAR_HEIGHT = 60
   TRANSITION_TICKS = 16
+
+  attr_reader :dialogue_speed
 
   def initialize(script, entity = nil)
     @script = script
     @entity = entity
     @done = false
     @transition_length = TRANSITION_TICKS
+    @dialogue_sections = { top: nil, middle: nil, bottom: nil }
     $gtk.args.state.fade = 0
   end
 
@@ -16,7 +19,7 @@ class ScriptState < State
 
     @fiber = Fiber.new do
       if code
-        ScriptContext.new(code, @entity).run
+        ScriptContext.new(code, @entity,self).run
       else
         $gtk.notify! "Missing script: #{script_path}"
       end
@@ -40,7 +43,6 @@ class ScriptState < State
     end
   end
 
-
   def draw(args)
     # Letterboxing transition
     letterbox_height = BAR_HEIGHT * ((@done ? 0 : 1) - (@transition_length / TRANSITION_TICKS)).abs
@@ -48,6 +50,16 @@ class ScriptState < State
     args.outputs.primitives << { x: 0, y: args.grid.h - letterbox_height, w: args.grid.w, h: letterbox_height, r: 0, g: 0, b: 0 }.solid
     args.outputs.primitives << { x: 0, y: 0, w: args.grid.w, h: args.grid.h, r: 0, g: 0, b: 0, a: args.state.fade }.solid
     previous_state&.draw(args)
+
+    # Dialogue
+    @dialogue_sections.each do |pos, dialogue|
+      next unless dialogue
+      dialogue.draw(pos)
+    end
+  end
+
+  def set_dialogue(pos, dialogue)
+    @dialogue_sections[pos.to_sym] = dialogue
   end
 
   private

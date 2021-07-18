@@ -20,7 +20,7 @@ class PlayState < State
     (camera.scale -= 1) if args.inputs.keyboard.key_down.open_square_brace && camera.scale > 1
     (camera.scale += 1) if args.inputs.keyboard.key_down.close_square_brace && camera.scale < 10
     push_state(PausedState.new) if args.inputs.keyboard.key_down.escape
-    push_state(DialogueState.new('intro', 'player' => player)) if args.inputs.keyboard.key_down.i
+    push_state(ScriptState.new('intro'))if args.inputs.keyboard.key_down.i
     push_state(ScriptState.new('test')) if args.inputs.keyboard.key_down.x
     if args.state.interactable&.interactable? &&  args.inputs.keyboard.key_down.enter || args.inputs.keyboard.key_down.space
       if args.state.interactable.respond_to?(:interact)
