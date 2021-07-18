@@ -22,7 +22,7 @@ class PlayState < State
     push_state(PausedState.new) if args.inputs.keyboard.key_down.escape
     push_state(ScriptState.new('intro'))if args.inputs.keyboard.key_down.i
     push_state(ScriptState.new('test')) if args.inputs.keyboard.key_down.x
-    if args.state.interactable&.interactable? &&  args.inputs.keyboard.key_down.enter || args.inputs.keyboard.key_down.space
+    if args.state.interactable&.interactable? && (args.inputs.keyboard.key_down.enter || args.inputs.keyboard.key_down.space)
       if args.state.interactable.respond_to?(:interact)
         args.state.interactable.interact
       else

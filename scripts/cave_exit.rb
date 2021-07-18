@@ -1,3 +1,4 @@
+stop(player)
 fade_out
 e = get_entity('cave_entrance')
 player.x = e.x

@@ -783,7 +783,7 @@
    <property name="collide" type="bool" value="true"/>
   </properties>
  </tile>
- <tile id="145" type="Interactable">
+ <tile id="145">
   <properties>
    <property name="collide" type="bool" value="false"/>
   </properties>
@@ -1097,6 +1097,7 @@
  <tile id="204">
   <properties>
    <property name="collide" type="bool" value="false"/>
+   <property name="terrain" value="sand"/>
   </properties>
  </tile>
  <tile id="205">

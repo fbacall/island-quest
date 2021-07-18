@@ -51,10 +51,12 @@ class ScriptState < State
     args.outputs.primitives << { x: 0, y: 0, w: args.grid.w, h: args.grid.h, r: 0, g: 0, b: 0, a: args.state.fade }.solid
     previous_state&.draw(args)
 
-    # Dialogue
-    @dialogue_sections.each do |pos, dialogue|
-      next unless dialogue
-      dialogue.draw(pos)
+    unless @done
+      # Dialogue
+      @dialogue_sections.each do |pos, dialogue|
+        next unless dialogue
+        dialogue.draw(pos)
+      end
     end
   end
 

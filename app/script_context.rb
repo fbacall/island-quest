@@ -30,6 +30,13 @@ class ScriptContext
     entity.done = true
   end
 
+  def stop(actor)
+    actor.x_accel = 0
+    actor.y_accel = 0
+    actor.x_vel = 0
+    actor.y_vel = 0
+  end
+
   def move(actor, x, y)
     ticks = 0
     action -> () {

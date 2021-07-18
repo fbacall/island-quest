@@ -84,4 +84,18 @@ class Map
 
     (tx1..tx2).to_a.product((ty2..ty1).to_a)
   end
+
+  def serialize
+    {  attributes: attributes, w: w, h: h, tile_h: tile_h, tile_w: tile_w, w_tiles: w_tiles, h_tiles: h_tiles, objects: objects.length }
+  end
+
+  # 2. Override the inspect method and return ~serialize.to_s~.
+  def inspect
+    serialize.to_s
+  end
+
+  # 3. Override to_s and return ~serialize.to_s~.
+  def to_s
+    serialize.to_s
+  end
 end

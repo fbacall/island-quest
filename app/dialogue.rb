@@ -7,7 +7,6 @@ class Dialogue
     @delay = 0
     @speech = speech
     @entity = entity
-    @tick = 0
     @speed = 4
     @done = false
     @text = ''
@@ -16,11 +15,10 @@ class Dialogue
 
   def tick
     return if done?
-    @tick += 1
 
     if @delay > 0
       @delay -= 1
-    elsif (@tick * 7) % @speed == 0 # Add some pseudo-randomness to dialogue speed
+    elsif ($gtk.args.tick_count * 7) % @speed == 0 # Add some pseudo-randomness to dialogue speed
       next_char
     end
   end
