@@ -21,31 +21,13 @@ class Camera
   end
 
   def adjusted_x
-    if target_x < center_x
-      center_x
-    elsif target_x > (map.w - center_x)
-      (map.w - center_x)
-    else
-      target_x
-    end
+    min_x = $gtk.args.grid.center_x / scale
+    target_x.clamp(min_x, (map.h - min_x))
   end
 
   def adjusted_y
-    if target_y < center_y
-      center_y
-    elsif target_y > (map.h - center_y)
-      (map.h - center_y)
-    else
-      target_y
-    end
-  end
-
-  def center_x
-    $gtk.args.grid.center_x / scale
-  end
-
-  def center_y
-    $gtk.args.grid.center_y / scale
+    min_y = $gtk.args.grid.center_y / scale
+    target_y.clamp(min_y, (map.h - min_y))
   end
 
   def screen_coords(entity)
