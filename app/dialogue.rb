@@ -36,7 +36,7 @@ class Dialogue
         @delay = 25
       when *%w(- : ; " ' \n \t \s)
       else
-        $gtk.args.audio[:talk] = { input: 'sounds/talk.wav' }
+        $gtk.args.audio[:talk] = { input: 'sounds/talk.wav', pitch: @entity ? @entity.voice_pitch : 1.0 }
       end
       @text += char
     end
@@ -75,7 +75,7 @@ class Dialogue
       text_x = args.grid.w.half
       text_align = 1
     elsif pos == :top
-      avatar_x = args.grid.w - avatar_width - (2 * margin)
+      avatar_x = args.grid.w - avatar_width - margin
       text_x = @entity ? avatar_x - margin : args.grid.w - margin
       flip = true
       text_align = 2

@@ -29,6 +29,11 @@ class Map
           @objects << ScriptEntity.new(object.attributes.name,
                                        object.attributes.gid.to_i,
                                        pos)
+        when 'Mobile'
+          @objects << MobileEntity.new(object.attributes.name, x: pos[:x], y: pos[:y]).tap do |m|
+            m.path = "gfx/#{object.attributes.name}.png"
+            m.voice_pitch = object.attributes.name == 'gob' ? 0.9 : 1.1
+          end
         else
           @objects << TileEntity.new(object.attributes.gid.to_i, pos)
         end

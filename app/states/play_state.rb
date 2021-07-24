@@ -13,21 +13,17 @@ class PlayState < State
     push_state(PausedState.new) if args.inputs.keyboard.key_down.escape
     push_state(ScriptState.new('intro'))if args.inputs.keyboard.key_down.i
     push_state(ScriptState.new('test')) if args.inputs.keyboard.key_down.x
-    if args.state.interactable&.interactable? && (args.inputs.keyboard.key_down.enter || args.inputs.keyboard.key_down.space)
-      if args.state.interactable.respond_to?(:interact)
-        args.state.interactable.interact
+    if player.interactable && (args.inputs.keyboard.key_down.enter || args.inputs.keyboard.key_down.space)
+      if player.interactable.respond_to?(:interact)
+        player.interactable.interact
       else
-        puts args.state.interactable.inspect
+        puts player.interactable.inspect
       end
     end
   end
 
   def update(args)
-    args.state.interactable = nil
     player.tick
-    args.state.interactable = map.objects.detect do |obj|
-      obj.intersect_rect?(player)
-    end
   end
 
   def draw(args)
@@ -40,7 +36,7 @@ class PlayState < State
 
     args.outputs.sprites << entities
 
-    if args.state.interactable&.interactable?
+    if player.interactable && !@paused
       args.outputs.sprites << TileEntity.new(242, x: player.x, y: player.y + 16, z_index: 500).draw
     end
 

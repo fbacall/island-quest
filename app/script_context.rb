@@ -86,7 +86,7 @@ class ScriptContext
   end
 
   def get_entity(name)
-    map.objects.detect { |o| o.name == name }
+    map.objects.detect { |o| o.respond_to?(:name) && o.name == name }
   end
 
   def has_item?(name)
@@ -101,11 +101,22 @@ class ScriptContext
     player.inventory.delete_if { |i| i.name == name }
   end
 
-  def dialogue(position, speech, avatar = nil)
-    d = Dialogue.new(speech, avatar)
+  def dialogue(position, speech, entity = nil)
+    d = Dialogue.new(speech, entity)
     state.set_dialogue(position, d)
     state_manager.push_state(DialogueState.new(d))
     Fiber.yield
+  end
+
+  def play_sound(sound)
+    $gtk.args.audio["script_#{sound}".to_sym] ||= {
+      input: "sounds/#{sound}.wav",
+      x: 0.0, y: 0.0, z: 0.0,
+      gain: 1.0,
+      pitch: 1.0,
+      paused: false,
+      looping: false,
+    }
   end
 
   private

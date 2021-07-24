@@ -5,22 +5,31 @@ class MobileEntity < Entity
                 :prev_speed, # Last frame speed (for impulse calc)
                 :x_vel, :y_vel,
                 :x_accel, :y_accel,
-                :max_speed, :max_accel, :friction, :dir, :skipped_frames, :frame, :visible
+                :max_speed, :max_accel,
+                :friction, :dir,
+                :skipped_frames, :frame,
+                :visible, :path,
+                :noclip, :voice_pitch
 
-  attr_reader :interactables
+  attr_reader :name
 
-  def initialize(x: 0, y: 0, w: 16, h: 16)
+  def initialize(name, x: 0, y: 0, w: 16, h: 16)
+    @name = name
     super(x: x, y: y, w: w, h: h)
     @x_vel = 0
     @y_vel = 0
     @x_accel = 0
     @y_accel = 0
+    @max_speed = 2
+    @max_accel = 0.4
     @friction = 0.25
     @skipped_frames = 0
     @frame = 0
     @dir = 'down'
     @z_index = 100
-    @visible = true
+    @visible = false
+    @noclip = true
+    @voice_pitch = 1.0
     $gtk.args.audio[:footstep] ||= {
       input: 'sounds/sand.wav',  # Filename
       x: 0.0, y: 0.0, z: 0.0,    # Relative position to the listener, x, y, z from -1.0 to 1.0
@@ -55,7 +64,6 @@ class MobileEntity < Entity
       collide
     end
     footsteps
-    @interactables = nearby_interactables
   end
 
   def accelerate
@@ -89,7 +97,7 @@ class MobileEntity < Entity
   end
 
   def collide
-    return if noclip
+    return unless collide?
     x_col = collision?(x, prev_y)
     y_col = collision?(prev_x, y)
 
@@ -141,6 +149,10 @@ class MobileEntity < Entity
       self.frame = (frame + 1) % 4
       self.skipped_frames = 0
     end
+  end
+
+  def collide?
+    !@noclip
   end
 
   def footsteps

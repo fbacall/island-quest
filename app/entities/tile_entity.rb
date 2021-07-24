@@ -11,10 +11,6 @@ class TileEntity < Entity
     @tile_id = tile_id.to_i
   end
 
-  def interactable?
-    false
-  end
-
   def collide?
     tile.properties.collide?
   end

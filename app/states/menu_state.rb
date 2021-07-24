@@ -22,26 +22,16 @@ class MenuState < State
   end
 
   def draw(args)
-    previous_state&.draw(args)
-    args.outputs.primitives << { x: 0, y: 0, w: args.grid.w, h: args.grid.h, r: 0, g: 0, b: 0, a: 128 }.solid
-
-    # BG
-    args.outputs.solids << {
-      x: 0,
-      y: 0,
-      w: args.grid.w,
-      h: args.grid.h,
-      r: 32,
-      g: 126,
-      b: 255,
-      a: 255
-    }
+    if previous_state
+      previous_state.draw(args)
+      args.outputs.primitives << { x: 0, y: 0, w: args.grid.w, h: args.grid.h, r: 0, g: 0, b: 0, a: 128 }.solid
+    end
 
     # Options
     s = 64
     phase = Math.sin(args.tick_count / 4) * s
     @options.each_with_index do |opt, i|
-      col = $gtk.args.state.menu_option == i ? (255 - s + phase) : 192
+      col = $gtk.args.state.menu_option == i ? (255 - s + phase) : 255
       args.outputs.labels << {
         x: args.grid.center_x,
         y: 400 - (i * 48),

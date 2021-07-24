@@ -1,21 +1,22 @@
 class Player < MobileEntity
-  attr_accessor :inventory, :noclip
+  attr_accessor :inventory
 
-  attr_reader :interactables, :walkable_terrains
+  attr_reader :interactable, :walkable_terrains
 
   def initialize(x, y)
-    super(x: x, y: y, w: 16, h: 16)
+    super('player', x: x, y: y, w: 16, h: 16)
     @path = 'gfx/man.png'
     @max_speed = 2
     @max_accel = 0.4
+    @visible = true
+    @noclip = false
     @inventory = []
     @walkable_terrains = ['sand', 'grass', 'long_grass']
-    @noclip = false
   end
 
   def tick
     super
-    @interactables = nearby_interactables
+    @interactable = nearby_interactable
   end
 
   def collision?(x, y)
@@ -28,11 +29,10 @@ class Player < MobileEntity
     super || terrain_tiles.any? { |t| !walkable_terrains.include?(t.properties[:terrain]) }
   end
 
-  def nearby_interactables
-    dist = 10
-    surrounding_tiles = map.tiles_in_layer(x - dist, y - dist, x + dist, y + dist, 1)
-
-    surrounding_tiles.select { |tile| tile && (tile.type == 'Item' || tile.type == 'Interactable') }
+  def nearby_interactable
+    map.objects.detect do |obj|
+      obj.interactable? && obj.intersect_rect?(self)
+    end
   end
 
   def has_item?(name)

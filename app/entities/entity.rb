@@ -39,4 +39,12 @@ class Entity
   def y1
     y
   end
+
+  def interactable?
+    false
+  end
+
+  def collide?
+    false
+  end
 end
