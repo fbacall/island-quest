@@ -23,7 +23,7 @@ class Camera
 
   def adjusted_x
     min_x = $gtk.args.grid.center_x / zoom
-    target_x.clamp(min_x, (map.h - min_x))
+    target_x.clamp(min_x, (map.w - min_x))
   end
 
   def adjusted_y
