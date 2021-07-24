@@ -1,11 +1,11 @@
 class Camera
-  attr_accessor :scale
+  attr_accessor :zoom
   attr_reader :target
 
-  def initialize(x = 0, y = 0, scale: 1, target: nil)
+  def initialize(x = 0, y = 0, zoom: 1, target: nil)
     @x = x
     @y = y
-    @scale = scale
+    @zoom = zoom
     @target = target
   end
 
@@ -22,21 +22,32 @@ class Camera
   end
 
   def adjusted_x
-    min_x = $gtk.args.grid.center_x / scale
+    min_x = $gtk.args.grid.center_x / zoom
     target_x.clamp(min_x, (map.h - min_x))
   end
 
   def adjusted_y
-    min_y = $gtk.args.grid.center_y / scale
+    min_y = $gtk.args.grid.center_y / zoom
     target_y.clamp(min_y, (map.h - min_y))
   end
 
   def screen_coords(entity)
     {
-      x: ((entity.left - adjusted_x) * scale + $gtk.args.grid.center_x).round,
-      y: ((entity.top - adjusted_y) * scale + $gtk.args.grid.center_y).round,
-      w: entity.w * scale,
-      h: entity.h * scale
+      x: ((entity.left - adjusted_x) * zoom + $gtk.args.grid.center_x).round,
+      y: ((entity.top - adjusted_y) * zoom + $gtk.args.grid.center_y).round,
+      w: entity.w * zoom,
+      h: entity.h * zoom
+    }
+  end
+
+  def screen_coords_rect(*rect)
+    w = rect[2] - rect[0]
+    h = rect[3] - rect[1]
+    {
+      x: ((rect[0] - adjusted_x) * zoom + $gtk.args.grid.center_x).round,
+      y: ((rect[1] - adjusted_y) * zoom + $gtk.args.grid.center_y).round,
+      w: w * zoom,
+      h: h * zoom
     }
   end
 end

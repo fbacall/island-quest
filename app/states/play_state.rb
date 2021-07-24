@@ -8,8 +8,8 @@ class PlayState < State
     player.x_accel = 1 if args.inputs.keyboard.key_held.d
     args.state.debug = !args.state.debug if args.inputs.keyboard.key_down.one
     player.noclip = !player.noclip if args.inputs.keyboard.key_down.two
-    (camera.scale -= 1) if args.inputs.keyboard.key_down.open_square_brace && camera.scale > 1
-    (camera.scale += 1) if args.inputs.keyboard.key_down.close_square_brace && camera.scale < 10
+    (camera.zoom -= 1) if args.inputs.keyboard.key_down.open_square_brace && camera.zoom > 1
+    (camera.zoom += 1) if args.inputs.keyboard.key_down.close_square_brace && camera.zoom < 10
     push_state(PausedState.new) if args.inputs.keyboard.key_down.escape
     push_state(ScriptState.new('intro'))if args.inputs.keyboard.key_down.i
     push_state(ScriptState.new('test')) if args.inputs.keyboard.key_down.x
@@ -33,7 +33,12 @@ class PlayState < State
   def draw(args)
     draw_debug(args) if args.state.debug
 
-    args.outputs.sprites << (map.layers + map.objects + [player]).sort_by(&:z_index).map(&:draw).compact
+    entities = [player]
+    entities.concat(map.layers)
+    entities.concat(map.objects)
+    entities.sort! { |a,b| a.z_index <=> b.z_index }.map!(&:draw)
+
+    args.outputs.sprites << entities
 
     if args.state.interactable&.interactable?
       args.outputs.sprites << TileEntity.new(242, x: player.x, y: player.y + 16, z_index: 500).draw
@@ -44,7 +49,6 @@ class PlayState < State
       args.outputs.sprites << bg.inventory_draw(i)
       args.outputs.sprites << item.inventory_draw(i)
     end
-
   end
 
   # Stop footstep sounds
@@ -60,9 +64,9 @@ class PlayState < State
     tile1, tile2 = map.tiles_at(player.x, player.y)
     args.outputs.labels << [10, 70, "Tile: #{tile_x} #{tile_y} [Layer 1: #{tile1.id}] [Layer 2: #{tile2.id}] [T: #{tile1.properties[:terrain]}", -1]
     args.outputs.labels << [10, 30, player.debug_info, -1]
-    args.outputs.labels << [args.grid.w - 80, args.grid.h - 10, 'FPS: ' + $gtk.current_framerate.round(1).to_s, -1]
     args.outputs.lines << [0, args.grid.h.half, args.grid.w, args.grid.h.half, 255, 255, 255, 255]
     args.outputs.lines << [args.grid.w.half, 0, args.grid.w.half, args.grid.h, 255, 255, 255, 255]
     args.outputs.labels << [10, 310, "Camera: #{camera.target_x.round(1)}, #{camera.target_y.round(1)}, Adjusted: #{camera.adjusted_x.round(1)}, #{camera.adjusted_y.round(1)}, Target: #{camera.target}", -1]
+    args.outputs.primitives << args.gtk.framerate_diagnostics_primitives
   end
 end

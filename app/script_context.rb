@@ -90,11 +90,11 @@ class ScriptContext
   end
 
   def has_item?(name)
-    player.inventory.any? { |i| i.name == name }
+    player.has_item?(name)
   end
 
   def add_item(entity)
-    player.inventory << entity unless has_item?(entity.name)
+    player.add_item(entity)
   end
 
   def remove_item(name)

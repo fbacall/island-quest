@@ -5,6 +5,7 @@ require 'app/entities/entity.rb'
 require 'app/entities/tile_entity.rb'
 require 'app/entities/item_entity.rb'
 require 'app/entities/script_entity.rb'
+require 'app/entities/mobile_entity.rb'
 require 'app/entities/player.rb'
 require 'app/map_layer.rb'
 require 'app/map.rb'
@@ -19,6 +20,9 @@ require 'app/states/paused_state.rb'
 require 'app/states/intro_state.rb'
 
 def tick(args)
+  args.state.debug ||= false
+  args.state.dputs_count = 0
+
   if args.tick_count <= 5
     args.outputs.solids << { x: 0, y: 0, w: args.grid.w, h: args.grid.h, r: 0, g: 0, b: 0, a: 255 }
     args.outputs.labels << { x: args.grid.center_x, y: args.grid.center_y + 20, text: 'Loading', size_enum: 20,
@@ -26,7 +30,7 @@ def tick(args)
   else
     args.state._map ||= Map.new('maps/world.tmx')
     args.state._player ||= Player.new(map.w.half, map.h.half)
-    args.state._camera ||= Camera.new(scale: 4, target: player)
+    args.state._camera ||= Camera.new(zoom: 4, target: player)
     args.state._state_manager ||= StateManager.new(IntroState.new)
 
     state_manager.current_state.handle_input(args)
@@ -52,7 +56,6 @@ def map
 end
 
 def dputs(*str)
-  $gtk.args.state.dputs_count ||= 0
   $gtk.args.state.dputs_count += 1
   str = str.join(', ')
   $gtk.args.outputs.labels << [400, 300 + ($gtk.args.state.dputs_count * 30), str, -1]
