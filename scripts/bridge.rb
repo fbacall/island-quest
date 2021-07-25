@@ -2,7 +2,7 @@ if has_item?('hammer')
   if has_item?('nails')
     fade_out
     5.times do
-      play_sound('footstep')
+      play_sound('hit')
       wait
     end
     get_entity('bridge').tile_id += 1
