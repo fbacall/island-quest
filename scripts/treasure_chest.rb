@@ -1,5 +1,9 @@
-play_sound('open')
-get_entity('treasure_chest').tile_id += 1
-wait
-dialogue(:middle, "Opened the chest..")
-done!
+chest = get_entity('treasure_chest')
+if chest.tile_id == 97
+  play_sound('open')
+  chest.tile_id += 1
+  wait
+else
+  ItemEntity.new('ring', 214).interact
+  done!
+end

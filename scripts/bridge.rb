@@ -1,6 +1,10 @@
 if has_item?('hammer')
   if has_item?('nails')
     fade_out
+    5.times do
+      play_sound('footstep')
+      wait
+    end
     get_entity('bridge').tile_id += 1
     fade_in
     dialogue(:middle, "Fixed the bridge!")
