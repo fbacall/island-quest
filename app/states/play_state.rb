@@ -12,7 +12,6 @@ class PlayState < State
     (camera.zoom += 1) if args.inputs.keyboard.key_down.close_square_brace && camera.zoom < 10
     push_state(PausedState.new) if args.inputs.keyboard.key_down.escape
     push_state(ScriptState.new('intro'))if args.inputs.keyboard.key_down.i
-    push_state(ScriptState.new('test')) if args.inputs.keyboard.key_down.x
     if player.interactable && (args.inputs.keyboard.key_down.enter || args.inputs.keyboard.key_down.space)
       if player.interactable.respond_to?(:interact)
         player.interactable.interact
