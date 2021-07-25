@@ -34,6 +34,15 @@ class PlayState < State
     entities.concat(map.objects)
     entities.sort! { |a,b| a.z_index <=> b.z_index }.map!(&:draw)
 
+    # Ocean background
+    args.outputs.solids << {
+      x: 0, y: 0,
+      w: args.grid.w,
+      h: args.grid.h,
+      r: 184,
+      g: 253,
+      b: 255
+    }
     args.outputs.sprites << entities
 
     if player.interactable && !@paused

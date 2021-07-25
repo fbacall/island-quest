@@ -12,6 +12,9 @@ class Map
     @w = @tile_w * @w_tiles
     @h = @tile_h * @h_tiles
     @layers = map.layers.map { |layer| MapLayer.new(self, layer) }
+    @layers << OceanLayer.new(self, 1, 0)
+    @layers << OceanLayer.new(self, 1, 1)
+    @layers << OceanLayer.new(self, 4, 2)
     @objects = []
     map.object_groups.each do |group|
       group.objects.each do |object|
