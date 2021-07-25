@@ -58,13 +58,13 @@ class Dialogue
     text_width, text_height = $gtk.calcstringbox('A', text_size)
     avatar_width = 200
     margin = 20
-    max_chars = ((args.grid.w - avatar_width - (3 * margin)) / text_width).floor
+    max_chars = ((args.grid.w - avatar_width - (2 * margin)) / text_width).floor
     max_lines = (third_height / text_height).floor
 
-    avatar_x = margin
+    avatar_x = 0
     avatar_y = margin + offset
     offset_y = offset
-    text_x = entity ? avatar_width + (margin * 2) : margin
+    text_x = entity ? avatar_width : 0
     text_y = offset_y
     flip = false
     text_align = 0
@@ -75,7 +75,7 @@ class Dialogue
       text_x = args.grid.w.half
       text_align = 1
     elsif pos == :top
-      avatar_x = args.grid.w - avatar_width - margin
+      avatar_x = args.grid.w - avatar_width
       text_x = @entity ? avatar_x - margin : args.grid.w - margin
       flip = true
       text_align = 2

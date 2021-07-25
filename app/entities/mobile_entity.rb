@@ -211,10 +211,10 @@ class MobileEntity < Entity
       path: @path,
       w: 10 * avatar_scale,
       h: 10 * avatar_scale,
-      source_x: 19,
-      source_y: 54,
-      source_w: 10,
-      source_h: 10,
+      source_x: 18,
+      source_y: 52,
+      source_w: 12,
+      source_h: 12,
     }
   end
 
