@@ -1,7 +1,7 @@
 if has_item?('hammer')
   if has_item?('nails')
     fade_out
-    get_entity('bridge').tile_id = 146
+    get_entity('bridge').tile_id += 1
     fade_in
     dialogue(:middle, "Fixed the bridge!")
     done!

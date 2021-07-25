@@ -42,7 +42,7 @@ class Player < MobileEntity
   def add_item(entity)
     inventory << entity unless has_item?(entity.name)
     walkable_terrains << 'water' if entity.name == 'flippers'
-    walkable_terrains << 'deep_water' if entity.name == 'flippers'
+    walkable_terrains << 'deep_water' if entity.name == 'snorkel'
     inventory
   end
 
