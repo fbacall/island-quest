@@ -2,10 +2,10 @@ class PlayState < State
   def handle_input(args)
     player.x_accel = 0
     player.y_accel = 0
-    player.y_accel = 1 if args.inputs.keyboard.key_held.w
-    player.x_accel = -1 if args.inputs.keyboard.key_held.a
-    player.y_accel = -1 if args.inputs.keyboard.key_held.s
-    player.x_accel = 1 if args.inputs.keyboard.key_held.d
+    player.y_accel = 1 if args.inputs.up
+    player.x_accel = -1 if args.inputs.left
+    player.y_accel = -1 if args.inputs.down
+    player.x_accel = 1 if args.inputs.right
     args.state.debug = !args.state.debug if args.inputs.keyboard.key_down.one
     player.noclip = !player.noclip if args.inputs.keyboard.key_down.two
     (camera.zoom -= 1) if args.inputs.keyboard.key_down.open_square_brace && camera.zoom > 1
