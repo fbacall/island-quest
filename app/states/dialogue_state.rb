@@ -4,13 +4,13 @@ class DialogueState < State
   end
 
   def handle_input(args)
-    speed = 4
+    speed = 3
     if args.inputs.keyboard.key_held.shift
       speed = 1
       delay = 0
+      @dialogue.delay = delay
     end
     @dialogue.speed = speed
-    @dialogue.delay = delay
     if @paused && (args.inputs.keyboard.key_down.space || args.inputs.keyboard.key_down.enter)
       @dialogue.active = false
       pop_state
