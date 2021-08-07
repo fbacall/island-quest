@@ -5,6 +5,8 @@ class ScriptContext
     @code = code
     @entity = entity
     @state = state
+    @async = false
+    @fibers = []
   end
 
   def run
@@ -119,6 +121,26 @@ class ScriptContext
     }
   end
 
+  def async(&block)
+    @async = true
+    @async_queue = []
+    block.call
+    alive_count = @async_queue.length
+    while alive_count > 0
+      alive_count = 0
+      @async_queue.each do |f|
+        if f.alive?
+          f.resume
+          alive_count += 1
+        end
+      end
+      Fiber.yield
+    end
+  ensure
+    @async = false
+    @async_queue = []
+  end
+
   private
 
   def set_fade(a)
@@ -126,6 +148,16 @@ class ScriptContext
   end
 
   def action(tick_proc, end_condition)
+    if @async
+      @async_queue << Fiber.new do
+        action_inner(tick_proc, end_condition)
+      end
+    else
+      action_inner(tick_proc, end_condition)
+    end
+  end
+
+  def action_inner(tick_proc, end_condition)
     ttl = TIMEOUT
     loop do
       ttl -= 1
