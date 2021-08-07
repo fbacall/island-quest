@@ -149,6 +149,12 @@ class ScriptContext
     Fiber.yield
   end
 
+  def clear_dialogue(pos = [:top, :middle, :bottom])
+    Array(pos).each do |p|
+      state.set_dialogue(p, nil)
+    end
+  end
+
   def play_sound(sound)
     $gtk.args.audio["script_#{sound}".to_sym] ||= {
       input: "sounds/#{sound}.wav",

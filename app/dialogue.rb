@@ -30,10 +30,8 @@ class Dialogue
     else
       char = speech[@speech_index]
       case char
-      when ','
-        @delay = 15
       when '.'
-        @delay = 25
+        @delay = 15
       when *%w(- : ; " ' \n \t \s)
       else
         $gtk.args.audio[:talk] = { input: 'sounds/talk.wav', pitch: @entity ? @entity.voice_pitch : 1.0 }

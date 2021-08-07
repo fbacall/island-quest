@@ -9,7 +9,7 @@ class PlaneEntity < MobileEntity
     @unbounded = true
     @revs = 0
     @max_accel = 99
-    @z_index = 9999
+    @z_index = 90
     $gtk.args.audio[:plane_engine] ||= {
       input: 'sounds/plane.wav',  # Filename
       x: 0.0, y: 0.0, z: 0.0,    # Relative position to the listener, x, y, z from -1.0 to 1.0

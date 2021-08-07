@@ -7,9 +7,8 @@ if has_item?('fuel')
     wait
   end
   dialogue(:middle, 'Refueled the plane!')
-
-  wait
   fade_in
+  clear_dialogue
 
   plane = get_entity('plane')
   witch = get_entity('witch')
@@ -18,6 +17,7 @@ if has_item?('fuel')
   player.noclip = true
   plane.noclip = true
   move(player, plane.x - 48, plane.y + 16)
+  plane.z_index = 9001
   move(player, plane.x, plane.y + 16)
   move(player, plane.x, plane.y)
 
