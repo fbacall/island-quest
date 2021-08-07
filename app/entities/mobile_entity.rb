@@ -50,7 +50,7 @@ class MobileEntity < Entity
   end
 
   def frameskip
-    (max_speed * 1.5 - speed) * 3
+    (3 - speed) * 3
   end
 
   def tick
@@ -173,9 +173,6 @@ class MobileEntity < Entity
     elsif s < m * 0.1
       $gtk.args.audio[:footstep][:paused] = true
     end
-
-    # Shift pitch based on tile, sand is higher pitch than long grass.
-    $gtk.args.audio[:footstep][:pitch] = 0.7 + @frame.to_f / 5
   end
 
   def collision?(x, y)
