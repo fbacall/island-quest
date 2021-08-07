@@ -29,6 +29,7 @@ class MobileEntity < Entity
     @z_index = 100
     @visible = false
     @noclip = true
+    @unbounded = false
     @voice_pitch = 1.0
     $gtk.args.audio[:footstep] ||= {
       input: 'sounds/sand.wav',  # Filename
@@ -90,8 +91,12 @@ class MobileEntity < Entity
   end
 
   def move
-    self.x = (x + x_vel).clamp(w.half, map.w - w.half)
-    self.y = (y + y_vel).clamp(h.half, map.h - h.half)
+    self.x = (x + x_vel)
+    self.y = (y + y_vel)
+    unless @unbounded
+      self.x = x.clamp(w.half, map.w - w.half)
+      self.y = y.clamp(h.half, map.h - h.half)
+    end
 
     true
   end
@@ -130,24 +135,28 @@ class MobileEntity < Entity
 
   def animate
     unless x_accel == 0 && y_accel == 0
-      if x_accel.abs > y_accel.abs
-        if x_accel > 0
-          self.dir = 'right'
-        else
-          self.dir = 'left'
-        end
-      else
-        if y_accel > 0
-          self.dir = 'up'
-        else
-          self.dir = 'down'
-        end
-      end
+      face(x_accel, y_accel)
     end
 
     if (self.skipped_frames += 1) >= frameskip
       self.frame = (frame + 1) % 4
       self.skipped_frames = 0
+    end
+  end
+
+  def face(relative_x, relative_y)
+    if relative_x.abs > relative_y.abs
+      if relative_x > 0
+        self.dir = 'right'
+      else
+        self.dir = 'left'
+      end
+    else
+      if relative_y > 0
+        self.dir = 'up'
+      else
+        self.dir = 'down'
+      end
     end
   end
 

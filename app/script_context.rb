@@ -40,46 +40,85 @@ class ScriptContext
   end
 
   def move(actor, x, y)
-    ticks = 0
-    action -> () {
-      ticks += 1
-      if (actor.x - x).abs < 4 && (actor.y - y).abs < 4
-        actor.x_accel = 0
-        actor.y_accel = 0
-      else
-        actor.x_accel = x - actor.x
-        actor.y_accel = y - actor.y
-      end
+    action(
+      -> () {
+        if (actor.x - x).abs < 4 && (actor.y - y).abs < 4
+          actor.x_accel = 0
+          actor.y_accel = 0
+        else
+          actor.x_accel = x - actor.x
+          actor.y_accel = y - actor.y
+        end
 
-      actor.tick
-    },
-           -> () {
-             actor.speed == 0
-           }
+        actor.tick
+      },
+      -> () {
+        actor.speed == 0
+      })
+  end
+
+  def face(actor, target, ticks = 16)
+    t = ticks
+    action(
+      -> () {
+        x_diff = target.x - actor.x
+        y_diff = target.y - actor.y
+        actor.face(x_diff, y_diff)
+        t -= 1
+      },
+      -> () { t < 0 }
+    )
+  end
+
+  def tick(actor, ticks = 16)
+    t = ticks
+    action(
+      -> () { actor.tick; t -= 1 },
+      -> () { t < 0 }
+    )
   end
 
   def wait(ticks = 16)
-    end_tick = $gtk.args.tick_count + ticks
-    action -> () {},
-           -> () { $gtk.args.tick_count >= end_tick }
+    t = ticks
+    action(
+      -> () { t -= 1 },
+      -> () { t < 0 }
+    )
   end
 
   def fade_out(ticks = 16)
     t = ticks
-    action -> () {
-      set_fade(255 * (1 - (t / ticks)))
-      t -= 1
-    },
-           -> () { t < 0 }
+    action(
+      -> () {
+        set_fade(255 * (1 - (t / ticks)))
+        t -= 1
+      },
+      -> () { t < 0 }
+    )
   end
 
   def fade_in(ticks = 16)
     t = ticks
-    action -> () {
-      set_fade(255 * (t / ticks))
-      t -= 1    },
-           -> () { t < 0 }
+    action(
+      -> () {
+        set_fade(255 * (t / ticks))
+        t -= 1
+      },
+      -> () { t < 0 }
+    )
+  end
 
+  def zoom_to(target_zoom, ticks = 16)
+    current_zoom = camera.zoom
+    t = ticks
+    inc = (target_zoom - current_zoom).to_f / ticks
+    action(
+      -> () {
+        camera.zoom = camera.zoom + inc
+        t -= 1
+      },
+      -> () { t < 0 }
+    )
   end
 
   def start_dialogue(name)

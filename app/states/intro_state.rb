@@ -1,5 +1,6 @@
 class IntroState < MenuState
   def init
+    $gtk.args.state.fade = 0
     super
     @options = ['Start', 'Quit']
     @title = 'Island Quest'

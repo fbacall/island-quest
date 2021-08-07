@@ -37,6 +37,8 @@ class Map
             m.path = "gfx/#{object.attributes.name}.png"
             m.voice_pitch = object.attributes.name == 'gob' ? 0.9 : 1.1
           end
+        when 'Plane'
+          @objects << PlaneEntity.new(object.attributes.name, x: pos[:x], y: pos[:y])
         else
           @objects << TileEntity.new(object.attributes.gid.to_i, pos)
         end

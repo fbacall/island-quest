@@ -11,8 +11,10 @@ class PlayState < State
     (camera.zoom -= 1) if args.inputs.keyboard.key_down.open_square_brace && camera.zoom > 1
     (camera.zoom += 1) if args.inputs.keyboard.key_down.close_square_brace && camera.zoom < 10
     push_state(PausedState.new) if args.inputs.keyboard.key_down.escape
-    push_state(ScriptState.new('intro'))if args.inputs.keyboard.key_down.i
-    push_state(ScriptState.new('async_test'))if args.inputs.keyboard.key_down.p
+    if args.state.debug
+      push_state(ScriptState.new('intro')) if args.inputs.keyboard.key_down.i
+      push_state(ScriptState.new('async_test')) if args.inputs.keyboard.key_down.p
+    end
     if player.interactable && (args.inputs.keyboard.key_down.enter || args.inputs.keyboard.key_down.space)
       if player.interactable.respond_to?(:interact)
         player.interactable.interact
@@ -60,6 +62,7 @@ class PlayState < State
   def pause
     super
     $gtk.args.audio[:footstep][:paused] = true if $gtk.args.audio[:footstep]
+    $gtk.args.audio[:plane_engine][:paused] = true if $gtk.args.audio[:plane_engine]
   end
 
   private
