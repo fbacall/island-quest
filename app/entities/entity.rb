@@ -5,7 +5,7 @@ class Entity
                 :w, :h, # Width/height
                 :z_index
 
-  def initialize(x: 0, y: 0, w: 0, h: 0, **)
+  def initialize(x: 0, y: 0, w: 0, h: 0, **other)
     @x = x
     @y = y
     @w = w
@@ -46,5 +46,17 @@ class Entity
 
   def collide?
     false
+  end
+
+  def serialize
+    { class: self.class.name, name: respond_to?(:name) ? name : nil, x: @x, y: @y, w: @w, h: @h }
+  end
+
+  def inspect
+    serialize.to_s
+  end
+
+  def to_s
+    serialize.to_s
   end
 end

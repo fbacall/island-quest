@@ -50,4 +50,16 @@ class Camera
       h: h * zoom
     }
   end
+
+  def serialize
+    { x: @x, y: @y, zoom: @zoom, target: @target&.name }
+  end
+
+  def inspect
+    serialize.to_s
+  end
+
+  def to_s
+    serialize.to_s
+  end
 end

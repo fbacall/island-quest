@@ -1,4 +1,5 @@
-if has_item?('fuel')
+player.max_speed = 30
+if !has_item?('fuel')
   stop(player)
   fade_out
 
@@ -23,7 +24,7 @@ if has_item?('fuel')
 
   fade_out
   player.visible = false
-  plane.state = 'occupied'
+  plane.empty = false
   camera.track(plane)
   fade_in
 
@@ -40,6 +41,7 @@ if has_item?('fuel')
   move(plane, 1280, 1408)
 
   async do
+    plane.max_accel = 99
     zoom_to(3, 240)
     plane.revs = 90
     move(plane, 880, 1232)

@@ -14,6 +14,11 @@ class PlayState < State
     if args.state.debug
       push_state(ScriptState.new('intro')) if args.inputs.keyboard.key_down.i
       push_state(ScriptState.new('async_test')) if args.inputs.keyboard.key_down.p
+      push_state(ScriptState.new('col_test')) if args.inputs.keyboard.key_down.o
+      if args.inputs.keyboard.key_down.q
+        player.y_accel = 1
+        player.x_accel = -1
+      end
     end
     if player.interactable && (args.inputs.keyboard.key_down.enter || args.inputs.keyboard.key_down.space)
       if player.interactable.respond_to?(:interact)
@@ -61,8 +66,9 @@ class PlayState < State
   # Stop footstep sounds
   def pause
     super
-    $gtk.args.audio[:footstep][:paused] = true if $gtk.args.audio[:footstep]
-    $gtk.args.audio[:plane_engine][:paused] = true if $gtk.args.audio[:plane_engine]
+    $gtk.args.audio[:footstep][:looping] = false if $gtk.args.audio[:footstep]
+    $gtk.args.audio[:swim][:looping] = false if $gtk.args.audio[:swim]
+    $gtk.args.audio[:plane_engine][:looping] = false if $gtk.args.audio[:plane_engine]
   end
 
   private

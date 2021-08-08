@@ -2,7 +2,7 @@ class TileEntity < Entity
   INVENTORY_SCALE = 4
   attr_accessor :tile_id
 
-  def initialize(tile_id: 255, x: 0, y: 0, z_index: 50)
+  def initialize(tile_id: 255, x: 0, y: 0, z_index: 50, **other)
     @x = x
     @y = y
     @w = 16

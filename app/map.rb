@@ -25,7 +25,12 @@ class Map
         })
         tile = object.attributes.gid&.to_i
         props[:tile_id] = tile if tile
-        klass = Object.const_get("#{object.attributes.type}Entity") rescue TileEntity
+        begin
+          klass = Object.const_get("#{object.attributes.type}Entity")
+        rescue NameError
+          warn "Couldn't find entity class: '#{object.attributes.type}Entity', defaulting to ItemEntity"
+          klass = ItemEntity
+        end
         entity = klass.new(object.attributes.name, props)
         @objects << entity
       end
@@ -82,15 +87,13 @@ class Map
   end
 
   def serialize
-    {  attributes: attributes, w: w, h: h, tile_h: tile_h, tile_w: tile_w, w_tiles: w_tiles, h_tiles: h_tiles, objects: objects.length }
+    { attributes: attributes, w: w, h: h, tile_h: tile_h, tile_w: tile_w, w_tiles: w_tiles, h_tiles: h_tiles, objects: objects.length }
   end
 
-  # 2. Override the inspect method and return ~serialize.to_s~.
   def inspect
     serialize.to_s
   end
 
-  # 3. Override to_s and return ~serialize.to_s~.
   def to_s
     serialize.to_s
   end

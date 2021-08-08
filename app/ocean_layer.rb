@@ -6,7 +6,7 @@ class OceanLayer < Entity
     @size = size
     @gap = gap
     @offset = offset
-    @target_key = "ocean_layer_#{offset}".to_sym
+    @target_key = "ocean_layer_#{size}_#{gap}_#{offset}".to_sym
     @target = $gtk.args.render_target(@target_key)
     @target.width = map.w
     @target.height = map.h

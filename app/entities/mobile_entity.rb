@@ -1,6 +1,4 @@
 class MobileEntity < Entity
-  DIRECTION_MATRIX = [-1, 0, 1].product([-1, 0, 1])
-
   attr_accessor :prev_x, :prev_y, # Last frame position
                 :prev_speed, # Last frame speed (for impulse calc)
                 :x_vel, :y_vel,
@@ -13,9 +11,9 @@ class MobileEntity < Entity
 
   attr_reader :name
 
-  def initialize(name, sprite: '', x: 0, y: 0, w: 16, h: 16, **)
+  def initialize(name, sprite: '', x: 0, y: 0, w: 16, h: 16, **other)
     @name = name
-    super(x: x, y: y, w: w, h: h)
+    super(x: x, y: y, w: w, h: h, **other)
     @path = "gfx/#{sprite}.png"
     @x_vel = 0
     @y_vel = 0
@@ -26,20 +24,15 @@ class MobileEntity < Entity
     @friction = 0.25
     @skipped_frames = 0
     @frame = 0
+    @lock_dir = false
     @dir = 'down'
+    @current_terrain = nil
+    @frames_per_anim = 4
     @z_index = 100
     @visible = false
     @noclip = true
     @unbounded = false
     @voice_pitch = 1.0
-    $gtk.args.audio[:footstep] ||= {
-      input: 'sounds/sand.wav',  # Filename
-      x: 0.0, y: 0.0, z: 0.0,    # Relative position to the listener, x, y, z from -1.0 to 1.0
-      gain: 0.1,                 # Volume (0.0 to 1.0)
-      pitch: 1.0,                # Pitch of the sound (1.0 = original pitch)
-      paused: true,              # Set to true to pause the sound at the current playback position
-      looping: true              # Set to true to loop the sound/music until you stop it
-    }
   end
 
   def speed
@@ -106,6 +99,7 @@ class MobileEntity < Entity
     return unless collide?
     x_col = collision?(x, prev_y)
     y_col = collision?(prev_x, y)
+    x_col = y_col = true if !x_col && !y_col && collision?(x, y) # Case where corner pixel collides with another corner pixel
 
     if x_col
       dputs 'X Col' if $gtk.args.state.debug
@@ -123,24 +117,19 @@ class MobileEntity < Entity
 
     # thud!
     if speed - @prev_speed < -1.5
-      $gtk.args.audio[:thud] ||= {
-        input: 'sounds/thud.wav',
-        x: 0.0, y: 0.0, z: 0.0,
-        gain: 1.0,
-        pitch: 1.0,
-        paused: false,
-        looping: false,
-      }
+      $gtk.args.audio[:thud] ||= { input: 'sounds/thud.wav',
+                                   x: 0.0, y: 0.0, z: 0.0,
+                                   gain: 1.0, pitch: 1.0,  paused: false, looping: false }
     end
   end
 
   def animate
-    unless x_accel == 0 && y_accel == 0
+    unless @lock_dir || (x_accel == 0 && y_accel == 0)
       face(x_accel, y_accel)
     end
 
     if (self.skipped_frames += 1) >= frameskip
-      self.frame = (frame + 1) % 4
+      self.frame = (frame + 1) % @frames_per_anim
       self.skipped_frames = 0
     end
   end
@@ -170,15 +159,27 @@ class MobileEntity < Entity
     m = max_speed
     # "Debounce" the pausing of footstep sound to avoid rapid pausing causing horrible static sound + HTML5 crash
     if s > m.half
-      $gtk.args.audio[:footstep][:paused] = false
+      if @current_terrain == 'water' || @current_terrain == 'deep_water'
+        $gtk.args.audio[:footstep][:looping] = false if $gtk.args.audio[:footstep]
+        $gtk.args.audio[:swim] ||= { input: 'sounds/swim.wav',
+                                     x: 0.0, y: 0.0, z: 0.0,
+                                     gain: 0.1, pitch: 1.0, paused: false, looping: true }
+        $gtk.args.audio[:swim][:pitch] = @current_terrain == 'deep_water' ? 0.7 : 1.0
+      else
+        $gtk.args.audio[:swim][:looping] = false if $gtk.args.audio[:swim]
+        $gtk.args.audio[:footstep] ||= { input: 'sounds/sand.wav',
+                                         x: 0.0, y: 0.0, z: 0.0,
+                                         gain: 0.1, pitch: 1.0, paused: false, looping: true }
+      end
     elsif s < m * 0.1
-      $gtk.args.audio[:footstep][:paused] = true
+      $gtk.args.audio[:swim][:looping] = false if $gtk.args.audio[:swim]
+      $gtk.args.audio[:footstep][:looping] = false if $gtk.args.audio[:footstep]
     end
   end
 
-  def collision?(x, y)
-    lower_tiles = map.tiles_in_layer(x - w.third, y + h.third,
-                                     x + w.third, y - h.third, 1)
+  def collision?(target_x, target_y)
+    lower_tiles = map.tiles_in_layer(target_x - w.third, target_y + h.third,
+                                     target_x + w.third, target_y - h.third, 1)
 
     lower_tiles.any? { |t| t.properties.collide? } ||
       map.objects.any? { |obj| obj.collide? && self.intersect_rect?(obj, 1.5) }
@@ -202,14 +203,23 @@ class MobileEntity < Entity
                when 'right'
                  48
                end
-    super.merge!({
-                  source_x: source_x,
-                  source_y: source_y,
-                  source_w: 16,
-                  source_h: 16,
-                  path: @path,
-                  a: @visible ? 255: 0
-                })
+
+    hash = super.merge!({
+                       source_x: source_x,
+                       source_y: source_y,
+                       source_w: w,
+                       source_h: h,
+                       path: @path,
+                       a: @visible ? 255: 0
+                     })
+
+    if @current_terrain == 'water'
+      hash.merge!({ source_y: source_y + 3, source_h: h - 3, h: (h - 3) * camera.zoom })
+    elsif @current_terrain == 'deep_water'
+      hash.merge!({ source_y: source_y + 6, source_h: h - 6, h: (h - 6) * camera.zoom })
+    else
+      hash
+    end
   end
 
   def dialogue_avatar
