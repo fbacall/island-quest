@@ -1,8 +1,8 @@
-class ScriptEntity < TileEntity
+class InteractableEntity < TileEntity
   attr_accessor :name, :done
 
-  def initialize(name, tile_id, x: 0, y: 0, z_index: 50)
-    super(tile_id, x: x, y: y, z_index: z_index)
+  def initialize(name, tile_id: 243, x: 0, y: 0, z_index: 50, **)
+    super(tile_id: tile_id, x: x, y: y, z_index: z_index)
     @name = name
     @done = false
   end

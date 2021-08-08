@@ -4,6 +4,6 @@ if chest.tile_id == 97
   chest.tile_id += 1
   wait
 else
-  ItemEntity.new('fuel', 197).interact
+  ItemEntity.new('fuel', tile_id: 197).interact
   done!
 end

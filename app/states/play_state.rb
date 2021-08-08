@@ -48,10 +48,10 @@ class PlayState < State
     args.outputs.sprites << entities
 
     if player.interactable && !@paused
-      args.outputs.sprites << TileEntity.new(242, x: player.x, y: player.y + 16, z_index: 500).draw
+      args.outputs.sprites << TileEntity.new(tile_id: 242, x: player.x, y: player.y + 16, z_index: 500).draw
     end
 
-    bg = TileEntity.new(241)
+    bg = TileEntity.new(tile_id: 241)
     player.inventory.each_with_index do |item, i|
       args.outputs.sprites << bg.inventory_draw(i)
       args.outputs.sprites << item.inventory_draw(i)

@@ -4,10 +4,7 @@ class Player < MobileEntity
   attr_reader :interactable, :walkable_terrains
 
   def initialize(x, y)
-    super('player', x: x, y: y, w: 16, h: 16)
-    @path = 'gfx/man.png'
-    @max_speed = 2
-    @max_accel = 0.4
+    super('player', sprite: 'man', x: x, y: y, w: 16, h: 16)
     @visible = true
     @noclip = false
     @inventory = []

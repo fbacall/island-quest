@@ -326,23 +326,33 @@
   <properties>
    <property name="zindex" type="int" value="50"/>
   </properties>
-  <object id="1" name="hammer" gid="178" x="720" y="528" width="16" height="16"/>
-  <object id="2" name="flippers" gid="180" x="912" y="560" width="16" height="16"/>
-  <object id="3" name="spade" gid="179" x="960" y="1024" width="16" height="16"/>
-  <object id="4" name="machete" gid="177" x="400" y="848" width="16" height="16"/>
-  <object id="5" name="bridge" gid="145" x="560" y="800" width="16" height="16"/>
-  <object id="6" name="hut_door" gid="113" x="832" y="384" width="16" height="16"/>
-  <object id="7" name="house_door" gid="113" x="416" y="544" width="16" height="16"/>
-  <object id="8" name="buried_treasure" gid="212" x="672" y="352" width="16" height="16"/>
-  <object id="9" name="cave_entrance" gid="88" x="384" y="656" width="16" height="16"/>
-  <object id="10" name="cave_exit" gid="88" x="912" y="512" width="16" height="16"/>
+  <object id="1" name="hammer" type="Item" gid="178" x="720" y="528" width="16" height="16"/>
+  <object id="2" name="flippers" type="Item" gid="180" x="912" y="560" width="16" height="16"/>
+  <object id="3" name="spade" type="Item" gid="179" x="960" y="1024" width="16" height="16"/>
+  <object id="4" name="machete" type="Item" gid="177" x="400" y="848" width="16" height="16"/>
+  <object id="5" name="bridge" type="Interactable" gid="145" x="560" y="800" width="16" height="16"/>
+  <object id="6" name="hut_door" type="Interactable" gid="113" x="832" y="384" width="16" height="16"/>
+  <object id="7" name="house_door" type="Interactable" gid="113" x="416" y="544" width="16" height="16"/>
+  <object id="8" name="buried_treasure" type="Interactable" gid="212" x="672" y="352" width="16" height="16"/>
+  <object id="9" name="cave_entrance" type="Interactable" gid="88" x="384" y="656" width="16" height="16"/>
+  <object id="10" name="cave_exit" type="Interactable" gid="88" x="912" y="512" width="16" height="16"/>
   <object id="11" name="treasure_chest" type="Interactable" gid="97" x="1232" y="1376" width="16" height="16"/>
-  <object id="14" name="bush" gid="193" x="512" y="464" width="16" height="16"/>
+  <object id="14" name="bush" type="Interactable" gid="193" x="512" y="464" width="16" height="16"/>
   <object id="15" name="climb_up" type="Interactable" gid="81" x="1472" y="208" width="16" height="16"/>
-  <object id="16" name="big_rock" gid="209" x="384" y="672" width="16" height="16"/>
+  <object id="16" name="big_rock" type="Interactable" gid="209" x="384" y="672" width="16" height="16"/>
   <object id="20" name="climb_down" type="Interactable" gid="36" x="1472" y="144" width="16" height="16"/>
-  <object id="22" name="gob" type="Mobile" gid="243" x="832" y="384" width="16" height="16"/>
-  <object id="23" name="witch" type="Mobile" gid="243" x="416" y="544" width="16" height="16"/>
+  <object id="22" name="gob" type="Mobile" gid="243" x="832" y="384" width="16" height="16">
+   <properties>
+    <property name="sprite" value="gob"/>
+    <property name="voice_pitch" type="float" value="0.9"/>
+   </properties>
+  </object>
+  <object id="23" name="witch" type="Mobile" gid="243" x="416" y="544" width="16" height="16">
+   <properties>
+    <property name="sprite" value="witch"/>
+    <property name="voice_pitch" type="float" value="1.1"/>
+   </properties>
+  </object>
   <object id="27" name="plane" type="Plane" gid="243" x="1536" y="48" width="16" height="16"/>
   <object id="28" name="enter_plane" type="Interactable" gid="81" x="1527.5" y="56.5" width="16" height="16"/>
  </objectgroup>

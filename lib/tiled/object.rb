@@ -15,6 +15,12 @@ module Tiled
     # @return [Tiled::Object] self
     def from_xml_hash(hash)
       attributes.add(hash[:attributes])
+      hash[:children].each do |child|
+        case child[:name]
+        when 'properties'
+          properties.from_xml_hash(child[:children])
+        end
+      end
 
       self
     end

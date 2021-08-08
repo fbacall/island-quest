@@ -13,9 +13,10 @@ class MobileEntity < Entity
 
   attr_reader :name
 
-  def initialize(name, x: 0, y: 0, w: 16, h: 16)
+  def initialize(name, sprite: '', x: 0, y: 0, w: 16, h: 16, **)
     @name = name
     super(x: x, y: y, w: w, h: h)
+    @path = "gfx/#{sprite}.png"
     @x_vel = 0
     @y_vel = 0
     @x_accel = 0

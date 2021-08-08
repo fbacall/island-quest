@@ -26,7 +26,7 @@ elsif has_item?('ring')
   witch.visible = true
   move(witch, door.x, door.y - 8)
   dialogue(:top, "This'll let you swim out into the deeper water, who knows what you'll find out there!", witch)
-  ItemEntity.new('snorkel', 181).interact
+  ItemEntity.new('snorkel', tile_id: 181).interact
 elsif has_item?('pickaxe')
   if has_item?('spade')
     dialogue(:top, "Nothing like a refreshing swim, right #{player_name}?", witch)
@@ -47,7 +47,7 @@ else
   dialogue(:top, "Really clears the mind!", witch)
   dialogue(:bottom, "Umm..", player)
   dialogue(:top, "Give it a try!", witch)
-  ItemEntity.new('pickaxe', 182).interact
+  ItemEntity.new('pickaxe', tile_id: 182).interact
 end
 
 move(witch, door.x, door.y)

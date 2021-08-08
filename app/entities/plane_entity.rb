@@ -1,10 +1,9 @@
 class PlaneEntity < MobileEntity
   attr_accessor :state, :revs
 
-  def initialize(name, x: 0, y: 0, w: 64, h: 48)
-    super(name, x: x, y: y, w: w, h: h)
+  def initialize(name, x: 0, y: 0, w: 64, h: 48, **)
+    super(name, sprite: 'biplane', x: x, y: y, w: w, h: h)
     @state = 'empty'
-    @path = 'gfx/biplane.png'
     @visible = true
     @unbounded = true
     @revs = 0

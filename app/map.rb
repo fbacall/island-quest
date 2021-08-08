@@ -18,30 +18,16 @@ class Map
     @objects = []
     map.object_groups.each do |group|
       group.objects.each do |object|
-        pos = {
+        props = object.properties.to_h.merge!({
           x: object.x.to_i + @tile_w.half,
           y: (@h - object.y.to_i) + @tile_h.half,
           z_index: group.properties.zindex
-        }
-        case object.attributes.type || object.tile.attributes.type
-        when 'Item'
-          @objects << ItemEntity.new(object.attributes.name,
-                                     object.attributes.gid.to_i,
-                                     pos)
-        when 'Interactable'
-          @objects << ScriptEntity.new(object.attributes.name,
-                                       object.attributes.gid.to_i,
-                                       pos)
-        when 'Mobile'
-          @objects << MobileEntity.new(object.attributes.name, x: pos[:x], y: pos[:y]).tap do |m|
-            m.path = "gfx/#{object.attributes.name}.png"
-            m.voice_pitch = object.attributes.name == 'gob' ? 0.9 : 1.1
-          end
-        when 'Plane'
-          @objects << PlaneEntity.new(object.attributes.name, x: pos[:x], y: pos[:y])
-        else
-          @objects << TileEntity.new(object.attributes.gid.to_i, pos)
-        end
+        })
+        tile = object.attributes.gid&.to_i
+        props[:tile_id] = tile if tile
+        klass = Object.const_get("#{object.attributes.type}Entity") rescue TileEntity
+        entity = klass.new(object.attributes.name, props)
+        @objects << entity
       end
     end
   end

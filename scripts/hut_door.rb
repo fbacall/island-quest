@@ -23,7 +23,7 @@ else
   dialogue(:top, "Take these nails. I think I left a hammer around here somewhere.", gob)
   dialogue(:bottom, "Got it.", player)
 
-  ItemEntity.new('nails', 198).interact
+  ItemEntity.new('nails', tile_id: 198).interact
 end
 
 move(gob, door.x, door.y)

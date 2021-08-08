@@ -51,6 +51,10 @@ module Tiled
       self
     end
 
+    def to_h
+      @props
+    end
+
     private
 
     def convert_value(children, raw_value, type)
