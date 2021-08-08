@@ -1357,7 +1357,7 @@
  </tile>
  <tile id="255">
   <properties>
-   <property name="collide" type="bool" value="false"/>
+   <property name="collide" type="bool" value="true"/>
   </properties>
  </tile>
  <wangsets>
