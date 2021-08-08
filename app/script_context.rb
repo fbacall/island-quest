@@ -6,7 +6,6 @@ class ScriptContext
     @entity = entity
     @state = state
     @async = false
-    @fibers = []
   end
 
   def run
@@ -54,7 +53,8 @@ class ScriptContext
       },
       -> () {
         actor.speed == 0
-      })
+      }
+    )
   end
 
   def face(actor, target, ticks = 16)
@@ -119,11 +119,6 @@ class ScriptContext
       },
       -> () { t < 0 }
     )
-  end
-
-  def start_dialogue(name)
-    state_manager.push_state(DialogueState.new(name, 'player' => player))
-    Fiber.yield
   end
 
   def get_entity(name)
